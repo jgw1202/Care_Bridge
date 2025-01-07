@@ -1,6 +1,5 @@
 package org.example.carebridge.domain.board.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter
