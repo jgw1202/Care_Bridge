@@ -3,7 +3,6 @@ package org.example.carebridge.domain.clinic.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.example.carebridge.domain.clinic.enumClass.ClinicStatus;
-import org.example.carebridge.domain.clinic.message.BaseEntity;
 import org.example.carebridge.domain.clinic.message.Message;
 
 import java.time.LocalDate;
@@ -12,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Table(name = "clinic")
-public class Clinic extends BaseEntity {
+public class Clinic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

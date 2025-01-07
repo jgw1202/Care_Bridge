@@ -3,7 +3,7 @@ package org.example.carebridge.domain.clinic.message;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.example.carebridge.domain.clinic.entity.Clinic;
-import org.example.carebridge.domain.clinic.entity.Participation;
+import org.example.carebridge.global.entity.BaseEntity;
 
 @Getter
 @Table(name = "message")
