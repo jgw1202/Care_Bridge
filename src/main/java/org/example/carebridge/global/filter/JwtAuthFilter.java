@@ -60,7 +60,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     //쿠키에서 JWT 추출 메서드
     private String getTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if(cookies != null) {
+        if(cookies == null) {
             System.out.println("요청에서 쿠키를 찾을 수 없음.");
             return null;
         }
