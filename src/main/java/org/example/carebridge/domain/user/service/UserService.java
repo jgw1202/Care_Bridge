@@ -58,7 +58,8 @@ public class UserService {
         Optional<User> findUser = userRepository.findByEmail(requestDto.getEmail());
 
         if (findUser.isPresent()) {
-            if(findUser.get().getUserStatus() == UserStatus.DELETE || findUser.get().getUserStatus() == UserStatus.ACTIVE) {
+            if(findUser.get().getUserStatus() == UserStatus.DELETE
+                    || findUser.get().getUserStatus() == UserStatus.ACTIVE) {
                 throw new RuntimeException("이미 존재하는 유저 입니다.");
             }
         }
@@ -77,7 +78,8 @@ public class UserService {
         Optional<User> findUser = userRepository.findByEmail(requestDto.getEmail());
 
         if (findUser.isPresent()) {
-            if(findUser.get().getUserStatus() == UserStatus.DELETE || findUser.get().getUserStatus() == UserStatus.ACTIVE) {
+            if(findUser.get().getUserStatus() == UserStatus.DELETE
+                    || findUser.get().getUserStatus() == UserStatus.ACTIVE) {
                 throw new RuntimeException("이미 존재하는 유저 입니다.");
             }
         }
@@ -86,7 +88,8 @@ public class UserService {
         user.updateUserRole(UserRole.DOCTOR);
         User savedUser = userRepository.save(user);
 
-        DoctorLicense doctorLicense = new DoctorLicense(savedUser, requestDto.getHospitalName(), requestDto.getDoctorLicenseFile());
+        DoctorLicense doctorLicense =
+                new DoctorLicense(savedUser, requestDto.getHospitalName(), requestDto.getDoctorLicenseFile());
         DoctorLicense savedLicense = doctorLicenseRepository.save(doctorLicense);
 
         Portfolio portfolio = new Portfolio(savedLicense, requestDto.getPortfolio());
@@ -128,7 +131,8 @@ public class UserService {
 
         response.addHeader("Set-Cookie", cookie.toString());
 
-        return new UserLoginResponseDto(user.getId(), user.getEmail(), "login Success", AuthenticationScheme.BEARER.getName());
+        return new UserLoginResponseDto(user.getId(), user.getEmail(),
+                "login Success", AuthenticationScheme.BEARER.getName());
 
 
     }

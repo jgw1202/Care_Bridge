@@ -4,7 +4,7 @@ package org.example.carebridge.domain.board.entity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
-import org.example.carebridge.domain.user.User;
+import org.example.carebridge.domain.user.entity.User;
 import org.example.carebridge.global.entity.BaseEntity;
 import org.hibernate.annotations.DynamicInsert;
 
