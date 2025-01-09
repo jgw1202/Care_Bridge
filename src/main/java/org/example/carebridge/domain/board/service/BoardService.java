@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface BoardService {
 
-    BoardCreateResponseDto createBoard(BoardCreateRequestDto dto);
+    BoardCreateResponseDto createBoard(Long userId, BoardCreateRequestDto dto);
 
     List<BoardFindResponseDto> findAllBoards();
 
     BoardFindResponseDto findBoardById(Long id);
 
-    BoardUpdateResponseDto updateBoardById(Long id, BoardUpdateRequestDto dto);
+    BoardUpdateResponseDto updateBoardById(Long userId, Long boardId, BoardUpdateRequestDto dto);
 
-    BoardDeleteResponseDto deleteBoardById(Long id);
+    BoardDeleteResponseDto deleteBoardById(Long userId, Long boardId);
 }
