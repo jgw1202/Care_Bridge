@@ -49,9 +49,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         if(token != null && jwtUtil.validToken(token)) {
-            String userName = this.jwtUtil.getUserName(token);
+            String userId = this.jwtUtil.getUserName(token);
 
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userId);
             this.setAuthentication(request, userDetails);
         }
     }

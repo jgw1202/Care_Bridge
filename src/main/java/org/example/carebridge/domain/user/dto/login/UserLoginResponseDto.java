@@ -10,14 +10,14 @@ public class UserLoginResponseDto {
 
     private String email;
 
-    private String message;
+    private String accessToken;
 
-    private String tokenAuthScheme;
+    private String refreshToken;
 
-    public UserLoginResponseDto(Long id, String email, String message, String tokenAuthScheme) {
+    public UserLoginResponseDto(Long id, String email, String accessToken, String refreshToken) {
         this.id = id;
         this.email = email;
-        this.message = message;
-        this.tokenAuthScheme = tokenAuthScheme;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 }
