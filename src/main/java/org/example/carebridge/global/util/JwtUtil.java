@@ -21,14 +21,14 @@ import org.springframework.util.StringUtils;
 @Slf4j
 public class JwtUtil {
 
-    @Value("$(jwt.secret)")
+    @Value("${jwt.secret}")
     private String secret;
 
-    @Value("$(jwt.expiration)") //테스트를위한 토큰시간 30분 설정(추후 수정 필요)
-    private long accessTokenExpiryMillis;
+    @Value("${jwt.expiration}") //테스트를위한 토큰시간 30분 설정(추후 수정 필요)
+    private Long accessTokenExpiryMillis;
 
-    @Value("$(jwt.refresh.expiration)")
-    private long refreshTokenExpiryMillis;
+    @Value("${jwt.refresh.expiration}")
+    private Long refreshTokenExpiryMillis;
 
     private final UserRepository userRepository;
 

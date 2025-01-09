@@ -11,6 +11,9 @@ import org.example.carebridge.domain.comment.entity.Comment;
 import org.example.carebridge.domain.comment.repository.CommentRepository;
 import org.example.carebridge.domain.user.entity.User;
 import org.example.carebridge.domain.user.repository.UserRepository;
+import org.example.carebridge.global.exception.BoardNotFoundException;
+import org.example.carebridge.global.exception.UserNotFoundException;
+import org.example.carebridge.global.exception.ForbiddenActionException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +29,9 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public CommentResponseDto createComment(Long boardId, CommentRequestDto dto, Long userId) {
         Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 보드를 찾을 수 없습니다."));
+                .orElseThrow(BoardNotFoundException::new);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+                .orElseThrow(UserNotFoundException::new);
 
         Comment comment = new Comment(null, dto.getComment(), board, user);
         Comment savedComment = commentRepository.save(comment);
@@ -42,14 +45,13 @@ public class CommentServiceImpl implements CommentService {
         );
     }
 
-
     @Override
     @Transactional
     public CommentResponseDto updateCommentById(Long id, CommentUpdateRequestDto dto, Long userId) {
         Comment comment = commentRepository.findByIdOrElseThrow(id);
 
         if (!comment.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("댓글 작성자만 수정할 수 있습니다.");
+            throw new ForbiddenActionException();
         }
 
         comment.setComment(dto.getComment());
@@ -64,11 +66,15 @@ public class CommentServiceImpl implements CommentService {
         );
     }
 
-
     @Override
     @Transactional
-    public CommentDeleteResponseDto deleteCommentById(Long id) {
+    public CommentDeleteResponseDto deleteCommentById(Long id, Long userId) {
         Comment comment = commentRepository.findByIdOrElseThrow(id);
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new ForbiddenActionException();
+        }
+
         commentRepository.delete(comment);
         return new CommentDeleteResponseDto("댓글이 삭제되었습니다.");
     }
