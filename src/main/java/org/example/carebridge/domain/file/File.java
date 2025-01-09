@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.carebridge.domain.board.entity.Board;
 import org.example.carebridge.global.entity.BaseEntity;
 
 @Entity
