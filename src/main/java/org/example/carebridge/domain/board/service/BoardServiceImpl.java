@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.carebridge.domain.board.dto.*;
 import org.example.carebridge.domain.board.entity.Board;
 import org.example.carebridge.domain.board.repository.BoardRepository;
-import org.example.carebridge.domain.user.User;
+import org.example.carebridge.domain.user.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
