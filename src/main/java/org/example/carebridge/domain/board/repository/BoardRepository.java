@@ -1,6 +1,8 @@
 package org.example.carebridge.domain.board.repository;
 
 import org.example.carebridge.domain.board.entity.Board;
+import org.example.carebridge.global.exception.ExceptionType;
+import org.example.carebridge.global.exception.NotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -12,6 +14,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findAll();
 
     default Board findByIdOrElseThrow(Long id) {
-        return findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 게시판을 찾을 수 없습니다."));
+        return findById(id).orElseThrow(() -> new NotFoundException(ExceptionType.BOARD_NOT_FOUND));
     }
 }

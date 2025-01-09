@@ -5,6 +5,10 @@ import org.example.carebridge.domain.board.dto.*;
 import org.example.carebridge.domain.board.entity.Board;
 import org.example.carebridge.domain.board.repository.BoardRepository;
 import org.example.carebridge.domain.user.entity.User;
+import org.example.carebridge.domain.user.repository.UserRepository;
+import org.example.carebridge.global.exception.ExceptionType;
+import org.example.carebridge.global.exception.ForbiddenException;
+import org.example.carebridge.global.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,14 +19,12 @@ import java.util.stream.Collectors;
 public class BoardServiceImpl implements BoardService{
 
     private final BoardRepository boardRepository;
-
-    // TODO 1 : 예외처리
+    private final UserRepository userRepository;
 
     // 보드 생성
-    public BoardCreateResponseDto createBoard(BoardCreateRequestDto dto) {
+    public BoardCreateResponseDto createBoard(Long userId, BoardCreateRequestDto dto) {
 
-        // TODO 2: 목 데이터를 실제 데이터로 전환(인증 후 정보 받아오기)
-        User user = new User();
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(ExceptionType.USER_NOT_FOUND));
 
         Board board = Board.builder()
                 .title(dto.getTitle())
@@ -58,8 +60,12 @@ public class BoardServiceImpl implements BoardService{
     }
 
     // 보드 수정
-    public BoardUpdateResponseDto updateBoardById(Long id, BoardUpdateRequestDto dto) {
-        Board board = boardRepository.findByIdOrElseThrow(id);
+    public BoardUpdateResponseDto updateBoardById(Long userId, Long boardId, BoardUpdateRequestDto dto) {
+        Board board = boardRepository.findByIdOrElseThrow(boardId);
+
+        if(!board.getUser().getId().equals(userId)){
+            throw new ForbiddenException(ExceptionType.FORBIDDEN_ACTION);
+        }
 
         board.updateBoard(dto.getTitle(), dto.getContent(), dto.getTag());
 
@@ -77,8 +83,12 @@ public class BoardServiceImpl implements BoardService{
     }
 
     // 보드 삭제
-    public BoardDeleteResponseDto deleteBoardById(Long id) {
-        Board board = boardRepository.findByIdOrElseThrow(id);
+    public BoardDeleteResponseDto deleteBoardById(Long userId, Long boardId) {
+        Board board = boardRepository.findByIdOrElseThrow(boardId);
+
+        if(!board.getUser().getId().equals(userId)){
+            throw new ForbiddenException(ExceptionType.FORBIDDEN_ACTION);
+        }
 
         boardRepository.delete(board);
 
