@@ -2,13 +2,11 @@ package org.example.carebridge.global.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.carebridge.domain.user.entity.User;
 import org.example.carebridge.domain.user.repository.UserRepository;
-import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,12 +21,14 @@ import org.springframework.util.StringUtils;
 @Slf4j
 public class JwtUtil {
 
-    @Value("asdkljfdsklfmqeiofdmslkfajdfioqlkfjdslkafj")
+    @Value("$(jwt.secret)")
     private String secret;
 
-    @Getter
-    @Value("300000") //테스트를위한 토큰시간 30분 설정(추후 수정 필요)
-    private long expiryMillis;
+    @Value("$(jwt.expiration)") //테스트를위한 토큰시간 30분 설정(추후 수정 필요)
+    private long accessTokenExpiryMillis;
+
+    @Value("$(jwt.refresh.expiration)")
+    private long refreshTokenExpiryMillis;
 
     private final UserRepository userRepository;
 
@@ -46,19 +46,27 @@ public class JwtUtil {
         return false;
     }
 
-    public String generateToken(Authentication authentication) throws EntityNotFoundException {
-        String username = authentication.getName();
-        return this.generateToken(username);
-    }
 
-    private String generateToken(String email) throws EntityNotFoundException {
-        User user = this.userRepository.findByEmailOrElseThrow(email);
+    public String generateAccessToken(User user) {
 
         Date currentDate = new Date();
-        Date expireDate = new Date(currentDate.getTime() + expiryMillis);
+        Date expireDate = new Date(currentDate.getTime() + accessTokenExpiryMillis);
 
         return Jwts.builder()
-                .subject(email)
+                .subject(user.getId().toString())
+                .issuedAt(currentDate)
+                .expiration(expireDate)
+                .claim("role", user.getUserRole())
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
+                .compact();
+    }
+
+    public String generateRefreshToken(User user) {
+        Date currentDate = new Date();
+        Date expireDate = new Date(currentDate.getTime() + refreshTokenExpiryMillis);
+
+        return Jwts.builder()
+                .subject(user.getId().toString())
                 .issuedAt(currentDate)
                 .expiration(expireDate)
                 .claim("role", user.getUserRole())

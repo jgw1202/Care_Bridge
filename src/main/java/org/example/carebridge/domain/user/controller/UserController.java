@@ -8,13 +8,16 @@ import org.example.carebridge.domain.user.dto.login.UserLoginResponseDto;
 import org.example.carebridge.domain.user.dto.signup.UserDoctorSignupRequestDto;
 import org.example.carebridge.domain.user.dto.signup.UserPatientSignupRequestDto;
 import org.example.carebridge.domain.user.dto.signup.UserSignupResponseDto;
+import org.example.carebridge.domain.user.dto.update.UserUpdateRequestDto;
+import org.example.carebridge.domain.user.dto.update.UserUpdateResponseDto;
+import org.example.carebridge.domain.user.entity.User;
 import org.example.carebridge.domain.user.service.UserService;
+import org.example.carebridge.global.auth.UserDetailsImple;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,7 +52,16 @@ public class UserController {
              @RequestBody UserLoginRequestDto userLoginRequestDto,
              HttpServletResponse response) {
 
-        UserLoginResponseDto userLoginResponseDto = userService.login(userLoginRequestDto, response);
+        UserLoginResponseDto userLoginResponseDto = userService.login(userLoginRequestDto);
+
+        ResponseCookie cookie = ResponseCookie.from("Authorization", userLoginResponseDto.getAccessToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(3600)
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
 
         return new ResponseEntity<>(userLoginResponseDto, HttpStatus.OK);
     }
@@ -63,6 +75,17 @@ public class UserController {
     //회원 탈퇴
 
     //사용자 정보 수정
+    @PatchMapping("/update-profile")
+    public ResponseEntity<UserUpdateResponseDto> update(
+            @RequestBody UserUpdateRequestDto userUpdateRequestDto,
+            @AuthenticationPrincipal UserDetailsImple userDetailsImple) {
+
+        User user = userDetailsImple.getUser();
+        UserUpdateResponseDto userUpdateResponseDto = userService.updateUser(userUpdateRequestDto,user);
+
+        return new ResponseEntity<>(userUpdateResponseDto, HttpStatus.OK);
+    }
+
 
     //로그아웃
 }

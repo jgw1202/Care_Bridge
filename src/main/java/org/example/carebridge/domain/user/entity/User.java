@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import org.example.carebridge.domain.user.dto.signup.UserPatientSignupRequestDto;
+import org.example.carebridge.domain.user.dto.update.UserUpdateRequestDto;
 import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.enums.UserStatus;
 import org.example.carebridge.global.entity.BaseEntity;
@@ -33,7 +34,7 @@ public class User extends BaseEntity {
     private String userName;
 
     @Column(nullable = false)
-    private String phone_num;
+    private String phoneNum;
 
     @Column(nullable = false)
     private String address;
@@ -47,20 +48,20 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus = UserStatus.ACTIVE;
 
-    private String profile_image_url;
+    private String profileImageUrl;
 
     public User() {
     }
 
     @Builder
-    public User(String email, String password, String userName, String phone_num, String address, Date birthday, String profile_image_url) {
+    public User(String email, String password, String userName, String phoneNum, String address, Date birthday, String profileImageUrl) {
         this.email = email;
         this.password = password;
         this.userName = userName;
-        this.phone_num = phone_num;
+        this.phoneNum = phoneNum;
         this.address = address;
         this.birthday = birthday;
-        this.profile_image_url = profile_image_url;
+        this.profileImageUrl = profileImageUrl;
     }
 
     public void updateStatus(UserStatus userStatus) {
@@ -69,6 +70,12 @@ public class User extends BaseEntity {
 
     public void updateUserRole(UserRole userRole) {
         this.userRole = userRole;
+    }
+
+    public void updateProfile(String address, String phoneNum, String profileImageUrl) {
+        this.address = address;
+        this.phoneNum = phoneNum;
+        this.profileImageUrl = profileImageUrl;
     }
 
 

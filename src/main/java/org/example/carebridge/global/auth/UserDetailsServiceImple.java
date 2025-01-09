@@ -14,8 +14,8 @@ public class UserDetailsServiceImple implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = this.userRepository.findByEmailOrElseThrow(username);
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        User user = this.userRepository.findByIdOrElseThrow(Long.valueOf(userId));
 
         return new UserDetailsImple(user);
     }
