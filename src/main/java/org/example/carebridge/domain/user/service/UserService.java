@@ -115,11 +115,14 @@ public class UserService {
         //RefreshToken Table 에서 해당 사용자가 없다면 발급. 최초 로그인
         String refreshToken = jwtUtil.generateRefreshToken(user);
         log.info("Refresh 토큰 생성 : {}", refreshToken);
-        refreshTokenRepository.save(new RefreshToken(user, refreshToken));
 
+        Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByUser(user);
+        if (oldRefreshToken.isEmpty()) {
+            refreshTokenRepository.save(new RefreshToken(user, refreshToken));
+        } else {
+            oldRefreshToken.get().updateRefreshToken(refreshToken);
+        }
         //RefreshToken Table 에서 해당 사용자의 토큰이 만료되었다면, 재발급.
-
-
         return new UserLoginResponseDto(user.getId(), user.getEmail(), accessToken, refreshToken);
 
     }
