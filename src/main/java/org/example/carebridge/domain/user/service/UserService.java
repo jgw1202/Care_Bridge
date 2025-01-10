@@ -18,6 +18,9 @@ import org.example.carebridge.domain.user.entity.User;
 import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.enums.UserStatus;
 import org.example.carebridge.domain.user.repository.UserRepository;
+import org.example.carebridge.global.entity.RefreshToken;
+import org.example.carebridge.global.repository.RefreshTokenRepository;
+import org.example.carebridge.global.service.TokenService;
 import org.example.carebridge.global.util.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -38,8 +41,9 @@ public class UserService {
     private final DoctorLicenseRepository doctorLicenseRepository;
     private final PortfolioRepository portfolioRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
+    private final TokenService tokenService;
 
     @Transactional
     public UserSignupResponseDto patientSignup(
@@ -105,12 +109,20 @@ public class UserService {
             throw new BadCredentialsException("비밀번호 오류");
         }
 
-        String accessToken = this.jwtUtil.generateAccessToken(user);
+        String accessToken = jwtUtil.generateAccessToken(user);
         log.info("Access 토큰 생성 : {}", accessToken);
 
-        String refreshToken = this.jwtUtil.generateRefreshToken(user);
+        //RefreshToken Table 에서 해당 사용자가 없다면 발급. 최초 로그인
+        String refreshToken = jwtUtil.generateRefreshToken(user);
         log.info("Refresh 토큰 생성 : {}", refreshToken);
 
+        Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByUser(user);
+        if (oldRefreshToken.isEmpty()) {
+            refreshTokenRepository.save(new RefreshToken(user, refreshToken));
+        } else {
+            oldRefreshToken.get().updateRefreshToken(refreshToken);
+        }
+        //RefreshToken Table 에서 해당 사용자의 토큰이 만료되었다면, 재발급.
         return new UserLoginResponseDto(user.getId(), user.getEmail(), accessToken, refreshToken);
 
     }
