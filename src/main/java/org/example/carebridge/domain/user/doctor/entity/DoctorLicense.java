@@ -21,14 +21,11 @@ public class DoctorLicense {
 
     private String hospitalName;
 
-    private String licenseURL;
-
     public DoctorLicense() {
     }
 
-    public DoctorLicense(User user,String hospitalName, String licenseURL) {
+    public DoctorLicense(User user,String hospitalName ) {
         this.user = user;
         this.hospitalName = hospitalName;
-        this.licenseURL = licenseURL;
     }
 }
