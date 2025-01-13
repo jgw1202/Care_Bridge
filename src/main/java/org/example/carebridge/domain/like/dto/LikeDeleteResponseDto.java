@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class LikeRequestDto {
-    private Long boardId;
+public class LikeDeleteResponseDto {
+    private String message;
 }

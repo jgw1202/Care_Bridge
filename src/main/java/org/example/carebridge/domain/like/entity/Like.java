@@ -11,6 +11,7 @@ import org.example.carebridge.domain.user.entity.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Table(name = "likes") // MySQL 예약어를 피하기 위해 테이블 이름 변경
 public class Like {
 
     @Id
