@@ -47,6 +47,7 @@ dependencies {
     // lombok test 라이브러리
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+
 }
 
 tasks.named('test') {
