@@ -8,10 +8,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.carebridge.domain.user.entity.User;
 import org.example.carebridge.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
 import org.springframework.util.StringUtils;
 
@@ -21,13 +26,13 @@ import org.springframework.util.StringUtils;
 @Slf4j
 public class JwtUtil {
 
-    @Value("$(jwt.secret)")
+    @Value("${jwt.secret}")
     private String secret;
 
-    @Value("$(jwt.expiration)") //테스트를위한 토큰시간 30분 설정(추후 수정 필요)
+    @Value("${jwt.expiration}") //테스트를위한 토큰시간 30분 설정(추후 수정 필요)
     private long accessTokenExpiryMillis;
 
-    @Value("$(jwt.refresh.expiration)")
+    @Value("${jwt.refresh.expiration}")
     private long refreshTokenExpiryMillis;
 
     private final UserRepository userRepository;
@@ -105,6 +110,18 @@ public class JwtUtil {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    public Authentication getAuthentication(String token) {
+        Claims claims = this.getClaims(token);
+        String username = claims.getSubject();
+        String role = claims.get("role", String.class);
+
+        User user = userRepository.findByIdOrElseThrow(Long.parseLong(username));
+
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
+
+        return new UsernamePasswordAuthenticationToken(user, token, authorities);
     }
 
 }
