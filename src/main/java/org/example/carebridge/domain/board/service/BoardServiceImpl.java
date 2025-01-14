@@ -94,4 +94,8 @@ public class BoardServiceImpl implements BoardService{
 
         return new BoardDeleteResponseDto("게시판이 삭제되었습니다.");
     }
+
+    public Board getBoardEntityById(Long boardId) {
+        return boardRepository.findByIdOrElseThrow(boardId);
+    }
 }
