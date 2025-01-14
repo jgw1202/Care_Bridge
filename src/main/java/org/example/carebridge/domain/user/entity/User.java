@@ -10,6 +10,7 @@ import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.enums.UserStatus;
 import org.example.carebridge.global.entity.BaseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -54,14 +55,13 @@ public class User extends BaseEntity {
     }
 
     @Builder
-    public User(String email, String password, String userName, String phoneNum, String address, Date birthday, String profileImageUrl) {
+    public User(String email, String password, String userName, String phoneNum, String address, Date birthday ) {
         this.email = email;
         this.password = password;
         this.userName = userName;
         this.phoneNum = phoneNum;
         this.address = address;
         this.birthday = birthday;
-        this.profileImageUrl = profileImageUrl;
     }
 
     public void updateStatus(UserStatus userStatus) {
@@ -75,6 +75,10 @@ public class User extends BaseEntity {
     public void updateProfile(String address, String phoneNum, String profileImageUrl) {
         this.address = address;
         this.phoneNum = phoneNum;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updateImage(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
 

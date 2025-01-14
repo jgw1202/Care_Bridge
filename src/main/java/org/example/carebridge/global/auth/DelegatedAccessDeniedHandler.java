@@ -24,6 +24,7 @@ public class DelegatedAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        resolver.resolveException(request, response, null, accessDeniedException);
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.getWriter().write("denied access");
     }
 }

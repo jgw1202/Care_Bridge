@@ -14,20 +14,25 @@ import org.example.carebridge.domain.user.dto.signup.UserSignupRequestDto;
 import org.example.carebridge.domain.user.dto.signup.UserSignupResponseDto;
 import org.example.carebridge.domain.user.dto.update.UserUpdateRequestDto;
 import org.example.carebridge.domain.user.dto.update.UserUpdateResponseDto;
+import org.example.carebridge.domain.user.entity.DoctorPortfolioImage;
 import org.example.carebridge.domain.user.entity.User;
+import org.example.carebridge.domain.user.entity.UserProfileImage;
 import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.enums.UserStatus;
+import org.example.carebridge.domain.user.repository.DoctorPortfolioRepository;
+import org.example.carebridge.domain.user.repository.UserProfileImageRepository;
 import org.example.carebridge.domain.user.repository.UserRepository;
 import org.example.carebridge.global.entity.RefreshToken;
 import org.example.carebridge.global.repository.RefreshTokenRepository;
 import org.example.carebridge.global.service.TokenService;
 import org.example.carebridge.global.util.JwtUtil;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 // test
@@ -44,6 +49,10 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private final TokenService tokenService;
+    private final UserProfileUploadService userProfileUploadService;
+    private final UserProfileImageRepository userProfileImageRepository;
+    private final DoctorPortfolioUploadService doctorPortfolioUploadService;
+    private final DoctorPortfolioRepository doctorPortfolioRepository;
 
     @Transactional
     public UserSignupResponseDto patientSignup(
@@ -86,7 +95,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         DoctorLicense doctorLicense =
-                new DoctorLicense(savedUser, requestDto.getHospitalName(), requestDto.getDoctorLicenseFile());
+                new DoctorLicense(savedUser, requestDto.getHospitalName());
         DoctorLicense savedLicense = doctorLicenseRepository.save(doctorLicense);
 
         Portfolio portfolio = new Portfolio(savedLicense, requestDto.getPortfolio());
@@ -137,6 +146,38 @@ public class UserService {
 
     }
 
+    //Profile Image Upload
+    @Transactional
+    public String uploadProfileImage(MultipartFile profileImage, User user) {
+        UserProfileImage userProfileImage;
+        try {
+            userProfileImage = userProfileUploadService.uploadAndSaveMetaData(user, profileImage);
+        } catch (IOException e) {
+            log.error("파일 업로드 실패 : {} ", e.getMessage());
+            throw new RuntimeException("파일 업로드 실패 : " + e.getMessage(), e);
+        }
+        userProfileImageRepository.save(userProfileImage);
+        user.updateImage(userProfileImage.getUrl());
+
+        return userProfileImage.getUrl();
+
+    }
+
+    //Portfolio Upload
+    @Transactional
+    public String uploadPortfolio(MultipartFile portfolio, User user){
+        DoctorPortfolioImage doctorPortfolioImage;
+        try {
+            doctorPortfolioImage = doctorPortfolioUploadService.DoctorUploadAndSaveMetaData(user, portfolio);
+        } catch (IOException e) {
+            log.error("파일 업로드 실패 : {} ", e.getMessage());
+            throw new RuntimeException("파일 업로드 실패 : " + e.getMessage(), e);
+        }
+        doctorPortfolioRepository.save(doctorPortfolioImage);
+        user.updateImage(doctorPortfolioImage.getUrl());
+        return doctorPortfolioImage.getUrl();
+    }
+
     private User buildUser(UserSignupRequestDto userSignupRequestDto) {
         return User.builder()
                 .email(userSignupRequestDto.getEmail())
@@ -145,7 +186,6 @@ public class UserService {
                 .phoneNum(userSignupRequestDto.getPhone())
                 .address(userSignupRequestDto.getAddress())
                 .birthday(userSignupRequestDto.getBirth())
-                .profileImageUrl(userSignupRequestDto.getProfileImage())
                 .build();
     }
 

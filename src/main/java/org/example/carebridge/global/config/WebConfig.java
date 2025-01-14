@@ -50,7 +50,7 @@ public class WebConfig {
                         auth.requestMatchers(WHITE_LIST).permitAll()
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR).permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/workspaces").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/api/users/upload/doctor-portfolio").hasRole("DOCTOR")
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling(handler -> handler
@@ -63,15 +63,15 @@ public class WebConfig {
         return http.build();
     }
     // 추후 권한 추가시 활성화
-//    @Bean
-//    public RoleHierarchy roleHierarchy() {
-//        return RoleHierarchyImpl.fromHierarchy(
-//                """
-//
-//
-//                        """
-//        );
-//    }
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        return RoleHierarchyImpl.fromHierarchy(
+                """
+                        ROLE_DOCTOR
+                        > ROLE_USER
+                        """
+        );
+    }
 
     @Bean
     @ConditionalOnProperty(name = "spring.h2.console.enable", havingValue = "true")

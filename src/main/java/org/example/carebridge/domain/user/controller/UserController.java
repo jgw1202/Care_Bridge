@@ -18,6 +18,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -69,8 +70,24 @@ public class UserController {
     //소셜 로그인 --보류
 
     //프로필 사진 등록
+    @PostMapping("/upload/profile-image")
+    public ResponseEntity<String> uploadProfileImage(@RequestParam("profile-image")MultipartFile profileImage,
+                                                     @AuthenticationPrincipal UserDetailsImple userDetails) {
+        User user = userDetails.getUser();
+        String profileImageUrl = userService.uploadProfileImage(profileImage, user);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(profileImageUrl);
+    }
 
     //의사 면허증 등록
+    @PostMapping("/upload/doctor-portfolio")
+    public ResponseEntity<String> uploadDoctorPortfolio(@RequestParam("doctor-portfolio")MultipartFile portfolio,
+                                                        @AuthenticationPrincipal UserDetailsImple userDetails) {
+        User user = userDetails.getUser();
+        String portfolioUrl = userService.uploadPortfolio(portfolio, user);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(portfolioUrl);
+    }
 
     //회원 탈퇴
 
