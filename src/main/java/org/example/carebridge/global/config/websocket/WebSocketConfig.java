@@ -21,19 +21,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry
-                .addEndpoint(ENDPOINT)
-                .setAllowedOrigins("*");
+        registry.addEndpoint("/chat").setAllowedOrigins("http://localhost:63342", "http://localhost:8080").withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes(PUBLISH);
-        registry.enableSimpleBroker("/sub", "/topic", "/queue");
+        registry.enableSimpleBroker("/sub");
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(webSocketInterceptor);
-    }
+//    @Override
+//    public void configureClientInboundChannel(ChannelRegistration registration) {
+//        registration.interceptors(webSocketInterceptor);
+//    }
 }

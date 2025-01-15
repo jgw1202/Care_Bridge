@@ -16,14 +16,11 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/api/chatrooms")
 @RequiredArgsConstructor
 @Slf4j
@@ -40,13 +37,14 @@ public class ClinicController {
         return new ResponseEntity<>(clinicService.createClinic(dto, userDetails), HttpStatus.CREATED);
     }
 
-    @MessageMapping("/{chatroomId}")
+    @MessageMapping("/chat/{chatroomId}")
     @SendTo("/sub/chat/{chatroomId}")
-    public MessageSendResponseDto sendMessage(@DestinationVariable Long chatroomId,
+    public String sendMessage(@DestinationVariable Long chatroomId,             // MessageSendResponseDto로 수정
                                               @Payload MessageSendRequestDto dto,
                                               @AuthenticationPrincipal UserDetailsImple userDetails) {
         log.info("chatRoomId: {}, message: {}", chatroomId, dto.getMessage());
-        return messageService.saveMessage(chatroomId, dto, userDetails);
+        return dto.getMessage();
+//        return messageService.saveMessage(chatroomId, dto, userDetails);
     }
 
     @PostMapping("/{chatroomId}")

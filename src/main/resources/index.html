@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #chat {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        #messages {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            max-height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        #messages li {
+            margin-bottom: 10px;
+        }
+        #messageInput {
+            width: 80%;
+            padding: 10px;
+            margin-right: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div id="chat">
+    <h1>Chat Room</h1>
+    <ul id="messages"></ul>
+    <input type="text" id="messageInput" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+    const ENDPOINT = '/chat'; // WebSocket endpoint
+    const SUBSCRIBE_URL = '/sub/chat'; // Subscription topic
+    const PUBLISH_URL = '/pub/chat/'; // Publish URL
+    const CHATROOM_ID = 1; // Example chatroom ID
+
+    let stompClient = null;
+
+    function connect() {
+        const socket = new SockJS('http://localhost:8080/chat');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+
+            // Subscribe to topic
+            stompClient.subscribe('/sub/chat/'+CHATROOM_ID, function (message) {
+                showMessage(message.body);
+            });
+        }, function (error) {
+            console.log('Connection lost. Reconnecting...');
+            setTimeout(connect, 5000); // 5초 후 재연결 시도
+        });
+    }
+
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
+
+        if (message && stompClient) {
+            // Send a message to the server
+            stompClient.send(`${PUBLISH_URL}${CHATROOM_ID}`, {}, JSON.stringify({
+                chatroomId: CHATROOM_ID,
+                message: message
+            }));
+            messageInput.value = ''; // Clear input field
+        }
+    }
+
+    function showMessage(message) {
+        const messages = document.getElementById('messages');
+        const messageElement = document.createElement('li');
+        messageElement.textContent = message;
+        messages.appendChild(messageElement);
+
+        // Scroll to the latest message
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    connect();
+</script>
+</body>
+</html>

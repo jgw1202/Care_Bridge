@@ -29,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig {
 
-    private static final String[] WHITE_LIST = {"/api/users/signup-patient", "/api/users/signup-doctor", "/api/users/login", "/ws/**", "/pub/**", "/sub/**"};
+    private static final String[] WHITE_LIST = {"/api/users/signup-patient", "/api/users/signup-doctor", "/api/users/login", "/chat/**", "/pub/**", "/sub/**"};
 
     private final JwtAuthFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
@@ -43,7 +43,7 @@ public class WebConfig {
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "CONNECT", "SEND", "OPTIONS"));
                     corsConfig.setAllowedHeaders(List.of("*"));
                     corsConfig.setAllowCredentials(true); // 쿠키 전달을 허용
-                    corsConfig.setAllowedOrigins(List.of("https://jiangxy.github.io/websocket-debug-tool/"));
+                    corsConfig.setAllowedOrigins(List.of("http://localhost:63342", "http://localhost:8080"));
                     return corsConfig;
                 }))
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
