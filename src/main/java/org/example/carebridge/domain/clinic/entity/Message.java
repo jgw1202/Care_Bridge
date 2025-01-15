@@ -1,21 +1,22 @@
-package org.example.carebridge.domain.clinic.message;
+package org.example.carebridge.domain.clinic.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
-import org.example.carebridge.domain.clinic.entity.Clinic;
 import org.example.carebridge.global.entity.BaseEntity;
 
 @Getter
+@Entity
 @Table(name = "message")
 public class Message extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(nullable = false)
+    @Column(nullable = false)
     private String messageContent;
 
-    @JoinColumn(nullable = false)
+    @Column(nullable = false)
     private Long senderId;
 
     @ManyToOne
@@ -24,6 +25,7 @@ public class Message extends BaseEntity {
 
     public Message() {}
 
+    @Builder
     public Message(String messageContent, Long senderId, Clinic clinic) {
         this.messageContent = messageContent;
         this.senderId = senderId;

@@ -5,6 +5,7 @@ import lombok.Getter;
 import org.example.carebridge.domain.user.entity.User;
 
 @Getter
+@Entity
 @Table(name = "participation")
 public class Participation {
     @Id
@@ -12,10 +13,17 @@ public class Participation {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
     @JoinColumn(name = "clinic_id")
     private Clinic clinic;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    public Participation() {}
+
+    public Participation(User user, Clinic clinic) {
+        this.clinic = clinic;
+        this.user = user;
+    }
 }

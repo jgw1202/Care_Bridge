@@ -4,15 +4,10 @@ package org.example.carebridge.domain.user.entity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
-import org.example.carebridge.domain.user.dto.signup.UserPatientSignupRequestDto;
-import org.example.carebridge.domain.user.dto.update.UserUpdateRequestDto;
 import org.example.carebridge.domain.user.enums.OAuth;
 import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.enums.UserStatus;
 import org.example.carebridge.global.entity.BaseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.Date;
 
 @Entity

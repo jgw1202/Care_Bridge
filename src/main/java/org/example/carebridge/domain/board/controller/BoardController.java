@@ -1,5 +1,6 @@
 package org.example.carebridge.domain.board.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.carebridge.domain.board.dto.*;
 import org.example.carebridge.domain.board.service.BoardServiceImpl;
@@ -20,7 +21,7 @@ public class BoardController {
 
     // 보드 생성
     @PostMapping
-    public ResponseEntity<BoardCreateResponseDto> createBoard(@RequestBody BoardCreateRequestDto dto, @AuthenticationPrincipal UserDetailsImple userDetails) {
+    public ResponseEntity<BoardCreateResponseDto> createBoard(@Valid @RequestBody BoardCreateRequestDto dto, @AuthenticationPrincipal UserDetailsImple userDetails) {
         return new ResponseEntity<>(boardService.createBoard(userDetails.getUser().getId(), dto), HttpStatus.CREATED);
     }
 
@@ -38,7 +39,7 @@ public class BoardController {
 
     // 보드 수정
     @PatchMapping("/{boardId}")
-    public ResponseEntity<BoardUpdateResponseDto> updateBoard(@PathVariable Long boardId, @RequestBody BoardUpdateRequestDto dto, @AuthenticationPrincipal UserDetailsImple userDetails) {
+    public ResponseEntity<BoardUpdateResponseDto> updateBoard(@PathVariable Long boardId, @Valid @RequestBody BoardUpdateRequestDto dto, @AuthenticationPrincipal UserDetailsImple userDetails) {
         return new ResponseEntity<>(boardService.updateBoardById(userDetails.getUser().getId(), boardId, dto), HttpStatus.OK);
     }
 

@@ -1,28 +1,26 @@
 package org.example.carebridge.domain.clinic.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import org.example.carebridge.domain.clinic.enumClass.ClinicStatus;
-import org.example.carebridge.domain.clinic.message.Message;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Entity
 @Table(name = "clinic")
 public class Clinic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(nullable = false)
+    @Column(nullable = false)
     private String name;
 
-    @JoinColumn(nullable = false)
-    private String status;
-
-    @JoinColumn(nullable = false)
+    @Column(nullable = false)
     private ClinicStatus clinicStatus;
 
     @OneToMany(mappedBy = "clinic")
@@ -33,10 +31,22 @@ public class Clinic {
 
     public Clinic() {}
 
-    public Clinic(Long id, String name, String status, LocalDate date, ClinicStatus clinicStatus) {
+    @Builder
+    public Clinic(Long id, String name, ClinicStatus clinicStatus) {
         this.id = id;
         this.name = name;
-        this.status = status;
         this.clinicStatus = clinicStatus;
+    }
+
+    public void addMessage(Message message) {
+        messages.add(message);
+    }
+
+    public void addParticipation(Participation participation) {
+        participations.add(participation);
+    }
+
+    public void deleteClinic() {
+        this.clinicStatus = ClinicStatus.DELETED;
     }
 }
