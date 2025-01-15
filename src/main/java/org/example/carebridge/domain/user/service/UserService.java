@@ -72,7 +72,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return new UserSignupResponseDto(user.getId(), user.getEmail(), user.getUserRole());
+        return new UserSignupResponseDto(user.getId(), user.getEmail(), user.getUserRole(), user.getOAuth());
 
     }
 
@@ -101,7 +101,7 @@ public class UserService {
         Portfolio portfolio = new Portfolio(savedLicense, requestDto.getPortfolio());
         portfolioRepository.save(portfolio);
 
-        return new UserSignupResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getUserRole());
+        return new UserSignupResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getUserRole(), savedUser.getOAuth());
 
     }
 
@@ -109,20 +109,29 @@ public class UserService {
     @Transactional
     public UserLoginResponseDto login(UserLoginRequestDto requestDto) {
 
-        String email = requestDto.getEmail();
-        String password = requestDto.getPassword();
+        User user;
 
-        User user = userRepository.findByEmailOrElseThrow(email);
+        if(requestDto.getId() != null) {
+            user = userRepository.findByIdOrElseThrow(requestDto.getId());
+        }
+        else {
+            String email = requestDto.getEmail();
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("비밀번호 오류");
+            String password = requestDto.getPassword();
+
+            user = userRepository.findByEmailOrElseThrow(email);
+
+            if (!passwordEncoder.matches(password, user.getPassword())) {
+                throw new BadCredentialsException("비밀번호 오류");
+            }
         }
 
-        String accessToken = jwtUtil.generateAccessToken(user);
+
+        String accessToken = jwtUtil.generateAccessToken(user.getId());
         log.info("Access 토큰 생성 : {}", accessToken);
 
         //RefreshToken Table 에서 해당 사용자가 없다면 발급. 최초 로그인
-        String refreshToken = jwtUtil.generateRefreshToken(user);
+        String refreshToken = jwtUtil.generateRefreshToken(user.getId());
         log.info("Refresh 토큰 생성 : {}", refreshToken);
 
         Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByUser(user);

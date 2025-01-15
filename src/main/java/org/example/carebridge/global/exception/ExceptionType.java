@@ -24,7 +24,14 @@ public enum ExceptionType {
 
     UNSUPPORTED_FILE_TYPE(HttpStatus.BAD_REQUEST, "허용되지 않는 파일 형식입니다."),
 
-    FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST,"파일 크기가 5MB를 초과할 수 없습니다");
+    FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST,"파일 크기가 5MB를 초과할 수 없습니다"),
+
+    ROLE_NOT_SUPPORT(HttpStatus.BAD_REQUEST, "의사는 소셜 로그인을 할 수 없습니다."),
+
+    OAUTH_GOOGLE(HttpStatus.BAD_REQUEST, "구글 계정으로 회원가입 하지 않았습니다.")
+    ;
+
+
 
 
 
