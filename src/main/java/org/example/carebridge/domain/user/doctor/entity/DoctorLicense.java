@@ -1,9 +1,7 @@
 package org.example.carebridge.domain.user.doctor.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
-import org.example.carebridge.domain.user.dto.signup.UserDoctorSignupRequestDto;
 import org.example.carebridge.domain.user.entity.User;
 
 @Entity

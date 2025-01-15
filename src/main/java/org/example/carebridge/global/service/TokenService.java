@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.carebridge.domain.user.entity.User;
-import org.example.carebridge.global.dto.TokenRequestDto;
 import org.example.carebridge.global.dto.TokenResponseDto;
 import org.example.carebridge.global.entity.RefreshToken;
 import org.example.carebridge.global.repository.RefreshTokenRepository;

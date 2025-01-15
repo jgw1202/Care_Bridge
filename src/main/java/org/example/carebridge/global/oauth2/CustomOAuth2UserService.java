@@ -2,10 +2,8 @@ package org.example.carebridge.global.oauth2;
 
 import lombok.RequiredArgsConstructor;
 import org.example.carebridge.domain.user.entity.User;
-import org.example.carebridge.domain.user.enums.OAuth;
 import org.example.carebridge.domain.user.repository.UserRepository;
 import org.example.carebridge.global.exception.BadRequestException;
-import org.example.carebridge.global.exception.CustomException;
 import org.example.carebridge.global.exception.ExceptionType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

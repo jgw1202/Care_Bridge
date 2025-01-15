@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.carebridge.domain.board.entity.Board;
 import org.example.carebridge.domain.board.service.BoardService;
 import org.example.carebridge.domain.file.service.FileService;
-import org.example.carebridge.global.auth.UserDetailsImple;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 @RestController
