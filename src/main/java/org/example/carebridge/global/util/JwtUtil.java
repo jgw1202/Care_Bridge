@@ -47,29 +47,27 @@ public class JwtUtil {
     }
 
 
-    public String generateAccessToken(User user) {
+    public String generateAccessToken(Long id) {
 
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + accessTokenExpiryMillis);
 
         return Jwts.builder()
-                .subject(user.getId().toString())
+                .subject(id.toString())
                 .issuedAt(currentDate)
                 .expiration(expireDate)
-                .claim("role", user.getUserRole())
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
                 .compact();
     }
 
-    public String generateRefreshToken(User user) {
+    public String generateRefreshToken(Long id) {
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + refreshTokenExpiryMillis);
 
         return Jwts.builder()
-                .subject(user.getId().toString())
+                .subject(id.toString())
                 .issuedAt(currentDate)
                 .expiration(expireDate)
-                .claim("role", user.getUserRole())
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
                 .compact();
     }

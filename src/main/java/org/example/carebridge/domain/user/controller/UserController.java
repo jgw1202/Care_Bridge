@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,7 +41,7 @@ public class UserController {
     //의사 회원가입
     @PostMapping("/signup-doctor")
     public ResponseEntity<UserSignupResponseDto> createDoctor(
-             @RequestBody UserDoctorSignupRequestDto userDoctorSignupRequestDto) {
+            @RequestBody UserDoctorSignupRequestDto userDoctorSignupRequestDto) {
 
         UserSignupResponseDto userSignupResponseDto = userService.doctorSignup(userDoctorSignupRequestDto);
 
@@ -50,11 +51,12 @@ public class UserController {
     //로그인
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponseDto> login(
-             @RequestBody UserLoginRequestDto userLoginRequestDto,
-             HttpServletResponse response) {
+            @RequestBody UserLoginRequestDto userLoginRequestDto,
+            HttpServletResponse response) {
 
         UserLoginResponseDto userLoginResponseDto = userService.login(userLoginRequestDto);
 
+        //언젠간 삭제됨(배포시)
         ResponseCookie cookie = ResponseCookie.from("Authorization", userLoginResponseDto.getAccessToken())
                 .httpOnly(true)
                 .secure(true)
@@ -66,8 +68,6 @@ public class UserController {
 
         return new ResponseEntity<>(userLoginResponseDto, HttpStatus.OK);
     }
-
-    //소셜 로그인 --보류
 
     //프로필 사진 등록
     @PostMapping("/upload/profile-image")
@@ -102,7 +102,4 @@ public class UserController {
 
         return new ResponseEntity<>(userUpdateResponseDto, HttpStatus.OK);
     }
-
-
-    //로그아웃
 }

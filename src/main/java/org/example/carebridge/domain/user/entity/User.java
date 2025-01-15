@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.example.carebridge.domain.user.dto.signup.UserPatientSignupRequestDto;
 import org.example.carebridge.domain.user.dto.update.UserUpdateRequestDto;
+import org.example.carebridge.domain.user.enums.OAuth;
 import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.enums.UserStatus;
 import org.example.carebridge.global.entity.BaseEntity;
@@ -18,7 +19,6 @@ import java.util.Date;
 @Getter
 @Table(name = "user")
 public class User extends BaseEntity {
-
 
 
     @Id
@@ -51,11 +51,14 @@ public class User extends BaseEntity {
 
     private String profileImageUrl;
 
+    @Enumerated(EnumType.STRING)
+    private OAuth oAuth = OAuth.LOCAL;
+
     public User() {
     }
 
     @Builder
-    public User(String email, String password, String userName, String phoneNum, String address, Date birthday ) {
+    public User(String email, String password, String userName, String phoneNum, String address, Date birthday) {
         this.email = email;
         this.password = password;
         this.userName = userName;
@@ -82,6 +85,23 @@ public class User extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public void inputGoogleOAuth(OAuth oAuth) {
+        this.oAuth = OAuth.GOOGLE;
+    }
+
+    public Boolean isGoogleUser() {
+
+        return this.oAuth == OAuth.GOOGLE;
+
+    }
+
+    public Boolean isPatient() {
+
+        return this.userRole == UserRole.USER;
+
+    }
+
+    //
 
 
 }

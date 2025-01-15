@@ -22,8 +22,8 @@ public class TokenService {
     @Transactional
     public TokenResponseDto generateAndStoreRefreshToken(User user) {
 
-        String accessToken = jwtUtil.generateAccessToken(user);
-        String refreshTokenKey = jwtUtil.generateRefreshToken(user);
+        String accessToken = jwtUtil.generateAccessToken(user.getId());
+        String refreshTokenKey = jwtUtil.generateRefreshToken(user.getId());
         RefreshToken oldRefreshToken = refreshTokenRepository.findByUserOrElseThrow(user);
         oldRefreshToken.updateRefreshToken(refreshTokenKey);
 
