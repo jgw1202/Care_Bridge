@@ -30,6 +30,8 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private String fileUrl;
+
     public Board() {}
 
     @Builder
@@ -44,5 +46,9 @@ public class Board extends BaseEntity {
         this.title = title;
         this.content = content;
         this.tag = tag;
+    }
+
+    public void updateFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
     }
 }

@@ -2,7 +2,6 @@ package org.example.carebridge.global.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.carebridge.domain.user.entity.User;
@@ -30,10 +29,10 @@ public class JwtUtil {
     private String secret;
 
     @Value("${jwt.expiration}") //테스트를위한 토큰시간 30분 설정(추후 수정 필요)
-    private long accessTokenExpiryMillis;
+    private Long accessTokenExpiryMillis;
 
     @Value("${jwt.refresh.expiration}")
-    private long refreshTokenExpiryMillis;
+    private Long refreshTokenExpiryMillis;
 
     private final UserRepository userRepository;
 
@@ -52,29 +51,27 @@ public class JwtUtil {
     }
 
 
-    public String generateAccessToken(User user) {
+    public String generateAccessToken(Long id) {
 
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + accessTokenExpiryMillis);
 
         return Jwts.builder()
-                .subject(user.getId().toString())
+                .subject(id.toString())
                 .issuedAt(currentDate)
                 .expiration(expireDate)
-                .claim("role", user.getUserRole())
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
                 .compact();
     }
 
-    public String generateRefreshToken(User user) {
+    public String generateRefreshToken(Long id) {
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + refreshTokenExpiryMillis);
 
         return Jwts.builder()
-                .subject(user.getId().toString())
+                .subject(id.toString())
                 .issuedAt(currentDate)
                 .expiration(expireDate)
-                .claim("role", user.getUserRole())
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
                 .compact();
     }

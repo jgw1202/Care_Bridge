@@ -14,17 +14,25 @@ import org.example.carebridge.domain.user.dto.signup.UserSignupRequestDto;
 import org.example.carebridge.domain.user.dto.signup.UserSignupResponseDto;
 import org.example.carebridge.domain.user.dto.update.UserUpdateRequestDto;
 import org.example.carebridge.domain.user.dto.update.UserUpdateResponseDto;
+import org.example.carebridge.domain.user.entity.DoctorPortfolioImage;
 import org.example.carebridge.domain.user.entity.User;
+import org.example.carebridge.domain.user.entity.UserProfileImage;
 import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.enums.UserStatus;
+import org.example.carebridge.domain.user.repository.DoctorPortfolioRepository;
+import org.example.carebridge.domain.user.repository.UserProfileImageRepository;
 import org.example.carebridge.domain.user.repository.UserRepository;
+import org.example.carebridge.global.entity.RefreshToken;
+import org.example.carebridge.global.repository.RefreshTokenRepository;
+import org.example.carebridge.global.service.TokenService;
 import org.example.carebridge.global.util.JwtUtil;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 // test
@@ -38,8 +46,13 @@ public class UserService {
     private final DoctorLicenseRepository doctorLicenseRepository;
     private final PortfolioRepository portfolioRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
+    private final TokenService tokenService;
+    private final UserProfileUploadService userProfileUploadService;
+    private final UserProfileImageRepository userProfileImageRepository;
+    private final DoctorPortfolioUploadService doctorPortfolioUploadService;
+    private final DoctorPortfolioRepository doctorPortfolioRepository;
 
     @Transactional
     public UserSignupResponseDto patientSignup(
@@ -59,7 +72,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        return new UserSignupResponseDto(user.getId(), user.getEmail(), user.getUserRole());
+        return new UserSignupResponseDto(user.getId(), user.getEmail(), user.getUserRole(), user.getOAuth());
 
     }
 
@@ -82,13 +95,13 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         DoctorLicense doctorLicense =
-                new DoctorLicense(savedUser, requestDto.getHospitalName(), requestDto.getDoctorLicenseFile());
+                new DoctorLicense(savedUser, requestDto.getHospitalName());
         DoctorLicense savedLicense = doctorLicenseRepository.save(doctorLicense);
 
         Portfolio portfolio = new Portfolio(savedLicense, requestDto.getPortfolio());
         portfolioRepository.save(portfolio);
 
-        return new UserSignupResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getUserRole());
+        return new UserSignupResponseDto(savedUser.getId(), savedUser.getEmail(), savedUser.getUserRole(), savedUser.getOAuth());
 
     }
 
@@ -96,21 +109,38 @@ public class UserService {
     @Transactional
     public UserLoginResponseDto login(UserLoginRequestDto requestDto) {
 
-        String email = requestDto.getEmail();
-        String password = requestDto.getPassword();
+        User user;
 
-        User user = userRepository.findByEmailOrElseThrow(email);
+        if(requestDto.getId() != null) {
+            user = userRepository.findByIdOrElseThrow(requestDto.getId());
+        }
+        else {
+            String email = requestDto.getEmail();
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("비밀번호 오류");
+            String password = requestDto.getPassword();
+
+            user = userRepository.findByEmailOrElseThrow(email);
+
+            if (!passwordEncoder.matches(password, user.getPassword())) {
+                throw new BadCredentialsException("비밀번호 오류");
+            }
         }
 
-        String accessToken = this.jwtUtil.generateAccessToken(user);
+
+        String accessToken = jwtUtil.generateAccessToken(user.getId());
         log.info("Access 토큰 생성 : {}", accessToken);
 
-        String refreshToken = this.jwtUtil.generateRefreshToken(user);
+        //RefreshToken Table 에서 해당 사용자가 없다면 발급. 최초 로그인
+        String refreshToken = jwtUtil.generateRefreshToken(user.getId());
         log.info("Refresh 토큰 생성 : {}", refreshToken);
 
+        Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByUser(user);
+        if (oldRefreshToken.isEmpty()) {
+            refreshTokenRepository.save(new RefreshToken(user, refreshToken));
+        } else {
+            oldRefreshToken.get().updateRefreshToken(refreshToken);
+        }
+        //RefreshToken Table 에서 해당 사용자의 토큰이 만료되었다면, 재발급.
         return new UserLoginResponseDto(user.getId(), user.getEmail(), accessToken, refreshToken);
 
     }
@@ -125,6 +155,38 @@ public class UserService {
 
     }
 
+    //Profile Image Upload
+    @Transactional
+    public String uploadProfileImage(MultipartFile profileImage, User user) {
+        UserProfileImage userProfileImage;
+        try {
+            userProfileImage = userProfileUploadService.uploadAndSaveMetaData(user, profileImage);
+        } catch (IOException e) {
+            log.error("파일 업로드 실패 : {} ", e.getMessage());
+            throw new RuntimeException("파일 업로드 실패 : " + e.getMessage(), e);
+        }
+        userProfileImageRepository.save(userProfileImage);
+        user.updateImage(userProfileImage.getUrl());
+
+        return userProfileImage.getUrl();
+
+    }
+
+    //Portfolio Upload
+    @Transactional
+    public String uploadPortfolio(MultipartFile portfolio, User user){
+        DoctorPortfolioImage doctorPortfolioImage;
+        try {
+            doctorPortfolioImage = doctorPortfolioUploadService.DoctorUploadAndSaveMetaData(user, portfolio);
+        } catch (IOException e) {
+            log.error("파일 업로드 실패 : {} ", e.getMessage());
+            throw new RuntimeException("파일 업로드 실패 : " + e.getMessage(), e);
+        }
+        doctorPortfolioRepository.save(doctorPortfolioImage);
+        user.updateImage(doctorPortfolioImage.getUrl());
+        return doctorPortfolioImage.getUrl();
+    }
+
     private User buildUser(UserSignupRequestDto userSignupRequestDto) {
         return User.builder()
                 .email(userSignupRequestDto.getEmail())
@@ -133,7 +195,6 @@ public class UserService {
                 .phoneNum(userSignupRequestDto.getPhone())
                 .address(userSignupRequestDto.getAddress())
                 .birthday(userSignupRequestDto.getBirth())
-                .profileImageUrl(userSignupRequestDto.getProfileImage())
                 .build();
     }
 

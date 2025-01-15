@@ -4,20 +4,16 @@ package org.example.carebridge.domain.user.entity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
-import org.example.carebridge.domain.user.dto.signup.UserPatientSignupRequestDto;
-import org.example.carebridge.domain.user.dto.update.UserUpdateRequestDto;
+import org.example.carebridge.domain.user.enums.OAuth;
 import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.enums.UserStatus;
 import org.example.carebridge.global.entity.BaseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.util.Date;
 
 @Entity
 @Getter
 @Table(name = "user")
 public class User extends BaseEntity {
-
 
 
     @Id
@@ -50,18 +46,20 @@ public class User extends BaseEntity {
 
     private String profileImageUrl;
 
+    @Enumerated(EnumType.STRING)
+    private OAuth oAuth = OAuth.LOCAL;
+
     public User() {
     }
 
     @Builder
-    public User(String email, String password, String userName, String phoneNum, String address, Date birthday, String profileImageUrl) {
+    public User(String email, String password, String userName, String phoneNum, String address, Date birthday) {
         this.email = email;
         this.password = password;
         this.userName = userName;
         this.phoneNum = phoneNum;
         this.address = address;
         this.birthday = birthday;
-        this.profileImageUrl = profileImageUrl;
     }
 
     public void updateStatus(UserStatus userStatus) {
@@ -78,6 +76,27 @@ public class User extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public void updateImage(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void inputGoogleOAuth(OAuth oAuth) {
+        this.oAuth = OAuth.GOOGLE;
+    }
+
+    public Boolean isGoogleUser() {
+
+        return this.oAuth == OAuth.GOOGLE;
+
+    }
+
+    public Boolean isPatient() {
+
+        return this.userRole == UserRole.USER;
+
+    }
+
+    //
 
 
 }

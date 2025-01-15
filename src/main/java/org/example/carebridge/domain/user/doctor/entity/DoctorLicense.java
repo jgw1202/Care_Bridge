@@ -1,9 +1,7 @@
 package org.example.carebridge.domain.user.doctor.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
-import org.example.carebridge.domain.user.dto.signup.UserDoctorSignupRequestDto;
 import org.example.carebridge.domain.user.entity.User;
 
 @Entity
@@ -21,14 +19,11 @@ public class DoctorLicense {
 
     private String hospitalName;
 
-    private String licenseURL;
-
     public DoctorLicense() {
     }
 
-    public DoctorLicense(User user,String hospitalName, String licenseURL) {
+    public DoctorLicense(User user,String hospitalName ) {
         this.user = user;
         this.hospitalName = hospitalName;
-        this.licenseURL = licenseURL;
     }
 }

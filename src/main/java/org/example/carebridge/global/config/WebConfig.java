@@ -3,6 +3,9 @@ package org.example.carebridge.global.config;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.example.carebridge.global.filter.JwtAuthFilter;
+import org.example.carebridge.global.oauth2.CustomOAuth2UserService;
+import org.example.carebridge.global.oauth2.OAuth2LoginFailureHandler;
+import org.example.carebridge.global.oauth2.OAuth2LoginSuccessHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -29,12 +32,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig {
 
-    private static final String[] WHITE_LIST = {"/api/users/signup-patient", "/api/users/signup-doctor", "/api/users/login", "/chat/**", "/pub/**", "/sub/**"};
+    private static final String[] WHITE_LIST = {"/api/users/signup-patient", "/api/users/signup-doctor", "/api/users/login", "/login/oauth2/code/google", "/chat/**", "/pub/**", "/sub/**"};
 
     private final JwtAuthFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -51,7 +57,7 @@ public class WebConfig {
                         auth.requestMatchers(WHITE_LIST).permitAll()
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR).permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/workspaces").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/api/users/upload/doctor-portfolio").hasRole("DOCTOR")
                                 .requestMatchers("/chat/**").permitAll()
                                 .anyRequest().authenticated()
                 )
@@ -60,20 +66,26 @@ public class WebConfig {
                         .accessDeniedHandler(accessDeniedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT 기반 인증에서 Stateless 유지
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oauth2-> oauth2
+                        .loginPage("/oauth2/authorization/google")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService))
+                        .successHandler(oAuth2LoginSuccessHandler)
+                );
 
         return http.build();
     }
     // 추후 권한 추가시 활성화
-//    @Bean
-//    public RoleHierarchy roleHierarchy() {
-//        return RoleHierarchyImpl.fromHierarchy(
-//                """
-//
-//
-//                        """
-//        );
-//    }
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        return RoleHierarchyImpl.fromHierarchy(
+                """
+                        ROLE_DOCTOR
+                        > ROLE_USER
+                        """
+        );
+    }
 
     @Bean
     @ConditionalOnProperty(name = "spring.h2.console.enable", havingValue = "true")

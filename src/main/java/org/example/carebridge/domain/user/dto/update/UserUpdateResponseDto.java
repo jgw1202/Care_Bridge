@@ -12,12 +12,10 @@ public class UserUpdateResponseDto {
 
     private String phone;
 
-    private String profileImageUrl;
 
     public UserUpdateResponseDto(User user) {
         this.id = user.getId();
         this.address = user.getAddress();
         this.phone = user.getPhoneNum();
-        this.profileImageUrl = user.getProfileImageUrl();
     }
 }
