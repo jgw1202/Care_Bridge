@@ -8,6 +8,7 @@ import org.example.carebridge.domain.user.enums.OAuth;
 import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.enums.UserStatus;
 import org.example.carebridge.global.entity.BaseEntity;
+
 import java.util.Date;
 
 @Entity
@@ -85,15 +86,15 @@ public class User extends BaseEntity {
     }
 
     public Boolean isGoogleUser() {
-
         return this.oAuth == OAuth.GOOGLE;
-
     }
 
     public Boolean isPatient() {
-
         return this.userRole == UserRole.USER;
+    }
 
+    public Boolean isDoctor() {
+        return this.userRole == UserRole.DOCTOR;
     }
 
     //
