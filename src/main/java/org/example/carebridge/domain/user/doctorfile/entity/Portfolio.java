@@ -1,10 +1,10 @@
-package org.example.carebridge.domain.user.doctor.entity;
+package org.example.carebridge.domain.user.doctorfile.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import org.example.carebridge.domain.user.dto.signup.UserDoctorSignupRequestDto;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Portfolio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,6 +8,8 @@ import java.util.Date;
 public class UserDoctorSignupRequestDto extends UserSignupRequestDto {
 
     private String hospitalName;
+    private String address;
+    private String category;
     private String portfolio;
     private String doctorLicenseFile;
 
