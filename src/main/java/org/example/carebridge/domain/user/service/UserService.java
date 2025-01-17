@@ -2,10 +2,12 @@ package org.example.carebridge.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.carebridge.domain.user.doctor.entity.DoctorLicense;
-import org.example.carebridge.domain.user.doctor.entity.Portfolio;
-import org.example.carebridge.domain.user.doctor.repository.DoctorLicenseRepository;
-import org.example.carebridge.domain.user.doctor.repository.PortfolioRepository;
+import org.example.carebridge.domain.user.doctorfile.entity.DoctorLicense;
+import org.example.carebridge.domain.user.doctorfile.entity.Portfolio;
+import org.example.carebridge.domain.user.doctorfile.repository.DoctorLicenseRepository;
+import org.example.carebridge.domain.user.doctorfile.repository.PortfolioRepository;
+import org.example.carebridge.domain.user.dto.doctor.DoctorListResponseDto;
+import org.example.carebridge.domain.user.dto.doctor.DoctorResponseDto;
 import org.example.carebridge.domain.user.dto.login.UserLoginRequestDto;
 import org.example.carebridge.domain.user.dto.login.UserLoginResponseDto;
 import org.example.carebridge.domain.user.dto.signup.UserDoctorSignupRequestDto;
@@ -24,11 +26,11 @@ import org.example.carebridge.domain.user.repository.UserProfileImageRepository;
 import org.example.carebridge.domain.user.repository.UserRepository;
 import org.example.carebridge.global.entity.RefreshToken;
 import org.example.carebridge.global.exception.BadValueException;
-import org.example.carebridge.global.exception.CustomException;
 import org.example.carebridge.global.exception.ExceptionType;
 import org.example.carebridge.global.repository.RefreshTokenRepository;
 import org.example.carebridge.global.service.TokenService;
 import org.example.carebridge.global.util.JwtUtil;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 // test
@@ -98,7 +102,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         DoctorLicense doctorLicense =
-                new DoctorLicense(savedUser, requestDto.getHospitalName());
+                new DoctorLicense(savedUser, requestDto.getHospitalName(), requestDto.getAddress(), requestDto.getCategory());
         DoctorLicense savedLicense = doctorLicenseRepository.save(doctorLicense);
 
         Portfolio portfolio = new Portfolio(savedLicense, requestDto.getPortfolio());
@@ -200,6 +204,32 @@ public class UserService {
 
        user.updateStatus(UserStatus.DELETE);
        userRepository.save(user);
+    }
+
+    //의사 전체 조회
+    @Transactional
+    public List<DoctorListResponseDto> getAllDoctor(UserRole role) {
+
+        List<DoctorListResponseDto> doctorList = new ArrayList<>();
+
+        List<DoctorListResponseDto> findDoctorList = userRepository.findUserListByUserRole(role);
+
+        for(DoctorListResponseDto user : findDoctorList) {
+            doctorList.add(new DoctorListResponseDto(
+                    user.getId(),
+                    user.getDoctorName(),
+                    user.getCategory(),
+                    user.getHospitalName(),
+                    user.getPhoneNumber()));
+        }
+        return findDoctorList;
+    }
+
+    @Transactional
+    public DoctorResponseDto getDoctor(Long id, UserRole role) {
+
+        return userRepository.findUserByUserRole(id, role);
+
     }
 
     private User buildUser(UserSignupRequestDto userSignupRequestDto) {

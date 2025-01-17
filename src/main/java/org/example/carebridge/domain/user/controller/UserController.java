@@ -1,8 +1,12 @@
 package org.example.carebridge.domain.user.controller;
 
 //import jakarta.validation.Valid;
+
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
+import org.example.carebridge.domain.user.dto.doctor.DoctorListResponseDto;
+import org.example.carebridge.domain.user.dto.doctor.DoctorResponseDto;
 import org.example.carebridge.domain.user.dto.login.UserLoginRequestDto;
 import org.example.carebridge.domain.user.dto.login.UserLoginResponseDto;
 import org.example.carebridge.domain.user.dto.signup.UserDoctorSignupRequestDto;
@@ -12,14 +16,18 @@ import org.example.carebridge.domain.user.dto.update.UserDeleteRequestDto;
 import org.example.carebridge.domain.user.dto.update.UserUpdateRequestDto;
 import org.example.carebridge.domain.user.dto.update.UserUpdateResponseDto;
 import org.example.carebridge.domain.user.entity.User;
+import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.service.UserService;
 import org.example.carebridge.global.auth.UserDetailsImple;
+import org.example.carebridge.global.exception.ExceptionType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -71,7 +79,7 @@ public class UserController {
 
     //프로필 사진 등록
     @PostMapping("/upload/profile-image")
-    public ResponseEntity<String> uploadProfileImage(@RequestParam("profile-image")MultipartFile profileImage,
+    public ResponseEntity<String> uploadProfileImage(@RequestParam("profile-image") MultipartFile profileImage,
                                                      @AuthenticationPrincipal UserDetailsImple userDetails) {
         User user = userDetails.getUser();
         String profileImageUrl = userService.uploadProfileImage(profileImage, user);
@@ -81,7 +89,7 @@ public class UserController {
 
     //의사 면허증 등록
     @PostMapping("/upload/doctor-portfolio")
-    public ResponseEntity<String> uploadDoctorPortfolio(@RequestParam("doctor-portfolio")MultipartFile portfolio,
+    public ResponseEntity<String> uploadDoctorPortfolio(@RequestParam("doctor-portfolio") MultipartFile portfolio,
                                                         @AuthenticationPrincipal UserDetailsImple userDetails) {
         User user = userDetails.getUser();
         String portfolioUrl = userService.uploadPortfolio(portfolio, user);
@@ -105,8 +113,32 @@ public class UserController {
             @AuthenticationPrincipal UserDetailsImple userDetailsImple) {
 
         User user = userDetailsImple.getUser();
-        UserUpdateResponseDto userUpdateResponseDto = userService.updateUser(userUpdateRequestDto,user);
+        UserUpdateResponseDto userUpdateResponseDto = userService.updateUser(userUpdateRequestDto, user);
 
         return new ResponseEntity<>(userUpdateResponseDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/doctors")
+    public ResponseEntity<List<DoctorListResponseDto>> getAllDoctor(
+            @AuthenticationPrincipal UserDetailsImple userDetails,
+            @RequestParam UserRole role) {
+
+        if (role != UserRole.DOCTOR) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        } else {
+            List<DoctorListResponseDto> doctorListResponseDtos = userService.getAllDoctor(role);
+            return new ResponseEntity<>(doctorListResponseDtos, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/doctor")
+    public ResponseEntity<DoctorResponseDto> getDoctor(
+            @RequestParam Long id,
+            @RequestParam UserRole role) {
+
+        DoctorResponseDto doctorResponseDto = userService.getDoctor(id, role);
+
+        return new ResponseEntity<>(doctorResponseDto, HttpStatus.OK);
     }
 }
