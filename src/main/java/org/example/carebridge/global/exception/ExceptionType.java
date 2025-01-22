@@ -28,7 +28,10 @@ public enum ExceptionType {
 
     ROLE_NOT_SUPPORT(HttpStatus.BAD_REQUEST, "의사는 소셜 로그인을 할 수 없습니다."),
 
-    OAUTH_GOOGLE(HttpStatus.BAD_REQUEST, "구글 계정으로 회원가입 하지 않았습니다.")
+    OAUTH_GOOGLE(HttpStatus.BAD_REQUEST, "구글 계정으로 회원가입 하지 않았습니다."),
+
+    LIKE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 좋아요가 존재합니다.");
+
     ;
 
 

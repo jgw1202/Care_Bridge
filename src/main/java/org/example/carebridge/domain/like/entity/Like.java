@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.carebridge.domain.board.entity.Board;
 import org.example.carebridge.domain.user.entity.User;
 
@@ -14,6 +15,7 @@ import org.example.carebridge.domain.user.entity.User;
 @NoArgsConstructor // 기본 생성자 자동 생성 (JPA 사용을 위해 필수)
 @AllArgsConstructor // 모든 필드를 초기화하는 생성자 자동 생성
 @Getter // 모든 필드에 대한 Getter 메서드 자동 생성
+@Setter
 @Table(name = "likes") // 테이블 이름을 "likes"로 지정 (MySQL 예약어와 충돌 방지)
 public class Like {
 
