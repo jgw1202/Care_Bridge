@@ -18,7 +18,7 @@
 </div>
 
 <div class="container mt-5">
-    <h1>Welcome, <span id="user-name"></span>!</h1>
+    <h1>Welcome, <span th:text="${userName}"></span>!</h1>
     <p>This is your dashboard.</p>
 
     <!-- 추가 콘텐츠 -->
@@ -34,13 +34,11 @@
     // 사용자 이름 출력
     document.addEventListener("DOMContentLoaded", () => {
         const accessToken = document.getElementById('accessToken').value;
-        // const accessToken = '[[${accessToken}]]';
         console.log(accessToken);
         fetch('/api/boards', {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization' : "bearer " + accessToken
+                'Content-Type': 'application/json'
             },
             credentials: 'include' // 쿠키 포함
         })

@@ -1,6 +1,8 @@
 package org.example.carebridge.global.controller.view;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.carebridge.global.auth.UserDetailsImpl;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,28 +32,32 @@ public class LoginViewController {
         model.addAttribute("name", name);
 
         return "signup-social";
-//        return
     }
 
     @GetMapping("/dashboard")
     public String getDashboard(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
         // 사용자 이름 가져오기
         String userName = userDetails.getUser().getUserName();
-
         // 모델에 사용자 이름 추가
         model.addAttribute("userName", userName);
-
-
 
         // 대시보드 HTML 반환
         return "dashboard";
     }
 
     @GetMapping("/login-social")
-    public String afterGoogleLogin(@RequestParam String accessToken, @RequestParam String refreshToken, Model model) {
+    public String afterGoogleLogin(@RequestParam String accessToken, @RequestParam String refreshToken, Model model, HttpServletResponse response) {
 
         model.addAttribute("accessToken", accessToken);
         model.addAttribute("refreshToken", refreshToken);
+        ResponseCookie cookie = ResponseCookie.from("Authorization", accessToken)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(3600)
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
 
         return "login-social";
     }
