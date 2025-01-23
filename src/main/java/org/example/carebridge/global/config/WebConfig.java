@@ -32,7 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig {
 
-    private static final String[] WHITE_LIST = {"/api/users/signup-patient", "/api/users/signup-doctor", "/api/users/login", "/login/oauth2/code/google", "/chat/**", "/pub/**", "/sub/**", "/ai"};
+    private static final String[] WHITE_LIST = {"/api/users/signup-patient", "/api/users/signup-doctor", "/api/users/login", "/login/oauth2/code/google", "/chat/**", "/pub/**", "/sub/**", "/ai" , "/boardList"};
 
     private final JwtAuthFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
