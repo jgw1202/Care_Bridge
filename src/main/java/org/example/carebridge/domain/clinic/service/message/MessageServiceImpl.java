@@ -7,7 +7,7 @@ import org.example.carebridge.domain.clinic.entity.Clinic;
 import org.example.carebridge.domain.clinic.entity.Message;
 import org.example.carebridge.domain.clinic.repository.ClinicRepository;
 import org.example.carebridge.domain.clinic.repository.MessageRepository;
-import org.example.carebridge.global.auth.UserDetailsImple;
+import org.example.carebridge.global.auth.UserDetailsImpl;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,7 +18,7 @@ public class MessageServiceImpl implements MessageService {
     private final ClinicRepository clinicRepository;
 
     @Override
-    public MessageSendResponseDto saveMessage(Long chatroomId, MessageSendRequestDto dto, UserDetailsImple userDetails) {
+    public MessageSendResponseDto saveMessage(Long chatroomId, MessageSendRequestDto dto, UserDetailsImpl userDetails) {
         Clinic clinic = clinicRepository.findById(chatroomId).orElseThrow(() -> new IllegalArgumentException("임시 예외처리"));
 
         Message message = Message.builder()

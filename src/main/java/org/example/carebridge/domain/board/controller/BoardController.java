@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.carebridge.domain.board.dto.*;
 import org.example.carebridge.domain.board.service.BoardServiceImpl;
-import org.example.carebridge.global.auth.UserDetailsImple;
+import org.example.carebridge.global.auth.UserDetailsImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,7 +21,7 @@ public class BoardController {
 
     // 보드 생성
     @PostMapping
-    public ResponseEntity<BoardCreateResponseDto> createBoard(@Valid @RequestBody BoardCreateRequestDto dto, @AuthenticationPrincipal UserDetailsImple userDetails) {
+    public ResponseEntity<BoardCreateResponseDto> createBoard(@Valid @RequestBody BoardCreateRequestDto dto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return new ResponseEntity<>(boardService.createBoard(userDetails.getUser().getId(), dto), HttpStatus.CREATED);
     }
 
@@ -39,13 +39,13 @@ public class BoardController {
 
     // 보드 수정
     @PatchMapping("/{boardId}")
-    public ResponseEntity<BoardUpdateResponseDto> updateBoard(@PathVariable Long boardId, @Valid @RequestBody BoardUpdateRequestDto dto, @AuthenticationPrincipal UserDetailsImple userDetails) {
+    public ResponseEntity<BoardUpdateResponseDto> updateBoard(@PathVariable Long boardId, @Valid @RequestBody BoardUpdateRequestDto dto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return new ResponseEntity<>(boardService.updateBoardById(userDetails.getUser().getId(), boardId, dto), HttpStatus.OK);
     }
 
     // 보드 삭제
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<BoardDeleteResponseDto> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImple userDetails) {
+    public ResponseEntity<BoardDeleteResponseDto> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return new ResponseEntity<>(boardService.deleteBoardById(userDetails.getUser().getId(), boardId), HttpStatus.OK);
     }
 }

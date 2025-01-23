@@ -6,7 +6,7 @@ import org.example.carebridge.domain.comment.dto.CommentRequestDto;
 import org.example.carebridge.domain.comment.dto.CommentResponseDto;
 import org.example.carebridge.domain.comment.dto.CommentUpdateRequestDto;
 import org.example.carebridge.domain.comment.service.CommentService;
-import org.example.carebridge.global.auth.UserDetailsImple;
+import org.example.carebridge.global.auth.UserDetailsImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,16 +28,16 @@ public class CommentController {
      *
      * @param boardId         댓글이 달릴 게시판의 ID
      * @param dto             댓글 생성 요청 데이터를 담고 있는 DTO
-     * @param userDetailsImple 인증된 사용자 정보
+     * @param userDetailsImpl 인증된 사용자 정보
      * @return 생성된 댓글의 정보
      */
     @PostMapping
     public ResponseEntity<CommentResponseDto> createComment(
             @PathVariable Long boardId,
             @RequestBody CommentRequestDto dto,
-            @AuthenticationPrincipal UserDetailsImple userDetailsImple) {
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         return new ResponseEntity<>(
-                commentService.createComment(boardId, dto, userDetailsImple.getUser().getId()),
+                commentService.createComment(boardId, dto, userDetailsImpl.getUser().getId()),
                 HttpStatus.CREATED
         );
     }
@@ -47,16 +47,16 @@ public class CommentController {
      *
      * @param commentId       수정할 댓글의 ID
      * @param dto             수정할 내용을 담고 있는 DTO
-     * @param userDetailsImple 인증된 사용자 정보
+     * @param userDetailsImpl 인증된 사용자 정보
      * @return 수정된 댓글의 정보
      */
     @PatchMapping("/{commentId}")
     public ResponseEntity<CommentResponseDto> updateComment(
             @PathVariable Long commentId,
             @RequestBody CommentUpdateRequestDto dto,
-            @AuthenticationPrincipal UserDetailsImple userDetailsImple) {
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         return new ResponseEntity<>(
-                commentService.updateCommentById(commentId, dto, userDetailsImple.getUser().getId()),
+                commentService.updateCommentById(commentId, dto, userDetailsImpl.getUser().getId()),
                 HttpStatus.OK
         );
     }
@@ -65,15 +65,15 @@ public class CommentController {
      * 댓글을 삭제하는 엔드포인트.
      *
      * @param commentId       삭제할 댓글의 ID
-     * @param userDetailsImple 인증된 사용자 정보
+     * @param userDetailsImpl 인증된 사용자 정보
      * @return 삭제 완료 메시지
      */
     @DeleteMapping("/{commentId}")
     public ResponseEntity<CommentDeleteResponseDto> deleteComment(
             @PathVariable Long commentId,
-            @AuthenticationPrincipal UserDetailsImple userDetailsImple) {
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
         CommentDeleteResponseDto responseDto =
-                commentService.deleteCommentById(commentId, userDetailsImple.getUser().getId());
+                commentService.deleteCommentById(commentId, userDetailsImpl.getUser().getId());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

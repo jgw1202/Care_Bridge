@@ -28,7 +28,9 @@ public enum ExceptionType {
 
     ROLE_NOT_SUPPORT(HttpStatus.BAD_REQUEST, "의사는 소셜 로그인을 할 수 없습니다."),
 
-    OAUTH_GOOGLE(HttpStatus.BAD_REQUEST, "구글 계정으로 회원가입 하지 않았습니다.")
+    OAUTH_GOOGLE(HttpStatus.BAD_REQUEST, "구글 계정으로 회원가입 하지 않았습니다."),
+
+    LOGIN_METHOD_WRONG(HttpStatus.BAD_REQUEST, "회원 가입 방식이 다르니, 올바른 회원 가입 방식으로 로그인 하십시오."),
     ;
 
 

@@ -6,12 +6,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.security.sasl.AuthenticationException;
 import java.util.HashMap;
 import java.util.Map;
 
+@RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(BadRequestException.class)
+    protected ResponseEntity<ExceptionResponseBody> handleBadRequestException(BadRequestException e) {
+        ExceptionResponseBody exceptionResponseBody = new ExceptionResponseBody(
+                HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST.value(),
+                Map.of("Bad-Request", e.getMessage())
+        );
+
+        return new ResponseEntity<>(exceptionResponseBody, HttpStatus.BAD_REQUEST);
+
+    }
 
 
 

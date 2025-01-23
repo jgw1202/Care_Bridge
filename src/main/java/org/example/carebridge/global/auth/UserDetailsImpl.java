@@ -12,7 +12,7 @@ import java.util.Collection;
 
 @Getter
 @RequiredArgsConstructor
-public class UserDetailsImple implements UserDetails {
+public class UserDetailsImpl implements UserDetails {
     private final User user;
 
     @Override
