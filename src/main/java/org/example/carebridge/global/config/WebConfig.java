@@ -1,6 +1,7 @@
 package org.example.carebridge.global.config;
 
 import jakarta.servlet.DispatcherType;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.carebridge.global.filter.JwtAuthFilter;
 import org.example.carebridge.global.oauth2.CustomOAuth2UserService;
@@ -32,7 +33,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig {
 
-    private static final String[] WHITE_LIST = {"/api/users/signup-patient", "/api/users/signup-doctor", "/api/users/login", "/login/oauth2/code/google", "/chat/**", "/pub/**", "/sub/**", "/ai" , "/boardList"};
+    private static final String[] WHITE_LIST = {"/api/users/signup-patient", "/api/users/signup-doctor",
+            "/api/users/login", "/login/oauth2/code/google",
+            "/signup", "/signup-patient", "/signup-doctor", "/signup-social",
+            "/chat/**", "/pub/**", "/sub/**", "/ai",
+            "/login", "/login-social"};
 
     private final JwtAuthFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
@@ -60,6 +65,7 @@ public class WebConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/users/upload/doctor-portfolio").hasRole("DOCTOR")
                                 .requestMatchers("/chat/**").permitAll()
                                 .anyRequest().authenticated()
+
                 )
                 .exceptionHandling(handler -> handler
                         .authenticationEntryPoint(authenticationEntryPoint)
@@ -67,15 +73,17 @@ public class WebConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT 기반 인증에서 Stateless 유지
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .oauth2Login(oauth2-> oauth2
+                .oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google")
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
                         .successHandler(oAuth2LoginSuccessHandler)
+                        .failureHandler(oAuth2LoginFailureHandler)
                 );
 
         return http.build();
     }
+
     // 추후 권한 추가시 활성화
     @Bean
     public RoleHierarchy roleHierarchy() {
@@ -85,11 +93,5 @@ public class WebConfig {
                         > ROLE_USER
                         """
         );
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "spring.h2.console.enable", havingValue = "true")
-    public WebSecurityCustomizer configureH2ConsoleEnable() {
-        return web->web.ignoring().requestMatchers(PathRequest.toH2Console());
     }
 }

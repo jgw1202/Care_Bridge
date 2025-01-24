@@ -51,6 +51,7 @@ public class JwtUtil {
     }
 
 
+    //AccessToken 발급 로직
     public String generateAccessToken(Long id) {
 
         Date currentDate = new Date();
@@ -64,6 +65,7 @@ public class JwtUtil {
                 .compact();
     }
 
+    //RefreshToken 발급 로직
     public String generateRefreshToken(Long id) {
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + refreshTokenExpiryMillis);

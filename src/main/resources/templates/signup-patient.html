@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+</head>
+<body>
+<section class="d-flex vh-100">
+    <div class="container-fluid row justify-content-center align-content-center">
+        <div class="card bg-dark" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+                <h2 class="text-white">회원가입</h2>
+                <p class="text-white-50 mt-2 mb-5">회원가입 정보를 입력해주세요!</p>
+
+                <div class="mb-3">
+                    <label class="form-label text-white">이메일</label>
+                    <input type="email" class="form-control" id="email">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">비밀번호</label>
+                    <input type="password" class="form-control" id="password" placeholder="비밀번호 입력">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">비밀번호 확인</label>
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="비밀번호 확인">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">이름</label>
+                    <input type="text" class="form-control" id="name">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">전화번호</label>
+                    <input type="text" class="form-control" id="phone">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">주소</label>
+                    <input type="text" class="form-control" id="address">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-white">생년월일</label>
+                    <input type="text" class="form-control" id="birth">
+                </div>
+
+                <button type="button" class="btn btn-primary" id="signup-button">회원가입</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.getElementById('signup-button').addEventListener('click', async () => {
+        const email = document.getElementById('email').value;
+        const name = document.getElementById('name').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const phone = document.getElementById('phone').value;
+        const address = document.getElementById('address').value;
+        const birth = document.getElementById('birth').value;
+
+        // 유효성 검사
+        if (!password || password !== confirmPassword) {
+            alert('비밀번호를 확인해주세요.');
+            return;
+        }
+
+        // 회원가입 데이터 생성
+        const signupData = {
+            email: email,
+            name: name,
+            password: password,
+            phone : phone,
+            address : address,
+            birth : birth
+        };
+
+        try {
+            const response = await fetch('/api/users/signup-patient', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(signupData),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert('회원가입 성공!');
+                window.location.href = '/login'; // 로그인 페이지로 리다이렉트
+            } else {
+                const error = await response.json();
+                alert('회원가입 실패: ' + JSON.stringify(error));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('회원가입 중 오류가 발생했습니다.');
+        }
+    });
+</script>
+</body>
+</html>

@@ -2,7 +2,6 @@ package org.example.carebridge.global.config.websocket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.carebridge.global.auth.UserDetailsServiceImple;
 import org.example.carebridge.global.exception.ExceptionType;
 import org.example.carebridge.global.exception.WrongAccessException;
 import org.example.carebridge.global.util.JwtUtil;
@@ -14,8 +13,6 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor

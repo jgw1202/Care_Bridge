@@ -2,7 +2,7 @@ package org.example.carebridge.global.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.carebridge.domain.user.entity.User;
-import org.example.carebridge.global.auth.UserDetailsImple;
+import org.example.carebridge.global.auth.UserDetailsImpl;
 import org.example.carebridge.global.dto.TokenResponseDto;
 import org.example.carebridge.global.service.TokenService;
 import org.springframework.http.HttpStatus;
@@ -22,9 +22,9 @@ public class AuthController {
     //Access Token 재발급 로직
     @PostMapping("/regenerations")
     public ResponseEntity<TokenResponseDto> regenerateToken(
-            @AuthenticationPrincipal UserDetailsImple userDetailsImple) {
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
 
-        User user = userDetailsImple.getUser();
+        User user = userDetailsImpl.getUser();
         TokenResponseDto tokenResponseDto = tokenService.generateAndStoreRefreshToken(user);
 
         return new ResponseEntity<>(tokenResponseDto, HttpStatus.OK);

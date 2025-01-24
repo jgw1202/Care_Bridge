@@ -14,6 +14,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +27,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
     private final UserService userService;
 
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response
             , Authentication authentication) throws IOException, ServletException {
@@ -35,10 +38,16 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         Map<String, Object> userInfo = new HashMap<>();
 
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
         //type = register 일 경우, 회원가입
         if (tryType.equals("register")) {
             userInfo.put("email", user.getAttribute("email"));
             userInfo.put("name", user.getAttribute("name"));
+
+            response.getWriter().write(new ObjectMapper().writeValueAsString(userInfo));
+            response.sendRedirect("/signup-social?email=" + user.getAttribute("email")+"&name=" + URLEncoder.encode(user.getAttribute("name"), StandardCharsets.UTF_8));
         }
 
         //type = login 일 경우, 로그인 진행
@@ -48,7 +57,15 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             userInfo.put("accessToken", accessToken);
             String refreshToken = jwtUtil.generateRefreshToken(userId);
             userInfo.put("refreshToken", refreshToken);
+
+            response.getWriter().write(new ObjectMapper().writeValueAsString(userInfo));
+            response.sendRedirect("/login-social?refreshToken=" + refreshToken + "&accessToken=" + accessToken);
+            //완료 후, 목적지가 없음.
+
         }
-        response.getWriter().write(new ObjectMapper().writeValueAsString(userInfo));
+
+
+
+
     }
 }
