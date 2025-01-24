@@ -31,11 +31,10 @@ public enum ExceptionType {
     OAUTH_GOOGLE(HttpStatus.BAD_REQUEST, "구글 계정으로 회원가입 하지 않았습니다."),
 
     LOGIN_METHOD_WRONG(HttpStatus.BAD_REQUEST, "회원 가입 방식이 다르니, 올바른 회원 가입 방식으로 로그인 하십시오."),
-    OAUTH_GOOGLE(HttpStatus.BAD_REQUEST, "구글 계정으로 회원가입 하지 않았습니다."),
 
     LIKE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 좋아요가 존재합니다.");
 
-    ;
+
 
 
 
