@@ -28,7 +28,7 @@ public class AIChatService {
         // 응답받은 메세지를 DTO에 담기
         AIChatResponseDto.ChatMessageDTO aiMessage = new AIChatResponseDto.ChatMessageDTO(aiResponse);
 
-        // /topic/messages 경로로 전달해 클라이언트가 메세지를 전달받음
+        // /sub/messages 경로로 전달해 클라이언트가 메세지를 전달받음
         messagingTemplate.convertAndSend("/sub/messages", aiMessage);
     }
 

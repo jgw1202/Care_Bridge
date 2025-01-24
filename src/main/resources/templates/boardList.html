@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Care-Bridge</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+        }
+        .navbar-vertical {
+            height: 100vh;
+            width: 200px;
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            position: fixed;
+        }
+        .navbar-vertical .nav-link {
+            font-size: 18px;
+            color: #495057;
+            padding: 15px;
+            text-align: center;
+        }
+        .navbar-vertical .nav-link:hover {
+            background-color: #e9ecef;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .navbar-vertical .active {
+            background-color: #e9ecef;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .content-container {
+            margin-left: 220px; /* Space for the navigation bar */
+            padding: 20px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<!-- 세로 네비게이션 바 -->
+<div class="navbar-vertical d-flex flex-column">
+    <a href="/profile.html" class="nav-link">내 정보</a>
+    <a href="/boardList.html" class="nav-link active" onclick="location.reload()">게시판</a>
+    <a href="/chat.html" class="nav-link">일대일 채팅</a>
+    <a href="/aichat.html" class="nav-link">AI 채팅</a>
+</div>
+
+<!-- 본문 콘텐츠 -->
+<div class="content-container">
+    <div class="container mt-5">
+        <!-- 상단 헤더 -->
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>자유게시판</h1>
+            <button class="btn btn-danger btn-sm" onclick="location.href='/logout'">로그아웃</button>
+        </div>
+        <hr>
+
+        <!-- 글쓰기 버튼 -->
+        <div class="d-flex justify-content-end mb-3">
+            <button class="btn btn-primary" onclick="location.href='/board/new'">글쓰기</button>
+        </div>
+
+        <!-- 게시판 테이블 -->
+        <table class="table table-bordered text-center">
+            <thead class="thead-light">
+            <tr>
+                <th>번호</th>
+                <th>태그</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일</th>
+                <th>조회수</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- 게시글 목록 -->
+            <tr th:each="board, iterStat : ${boards}">
+                <td th:text="${iterStat.index + 1}"></td> <!-- 번호 -->
+                <td th:text="${board.tag}"></td>           <!-- 태그 -->
+                <td>
+                    <a th:href="@{/board/{id}(id=${board.id})}" th:text="${board.title}"></a>
+                </td>                                       <!-- 제목 -->
+                <td th:text="${board.userName}"></td>      <!-- 작성자 -->
+                <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></td> <!-- 작성일 -->
+                <td th:text="${board.views}"></td>          <!-- 조회수 -->
+            </tr>
+            <!-- 게시글이 없을 때 -->
+            <tr th:if="${boards.isEmpty()}">
+                <td colspan="6">등록된 게시글이 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
