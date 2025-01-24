@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>카카오페이 결제</title>
+    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+    <script>
+
+        function requestKakaoPay() {
+            fetch('http://localhost:8080/api/payments/kakaopay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    totalAmount: 1000,
+                    name: '테스트 상품'
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.next_redirect_pc_url) {
+                        window.location.href = data.next_redirect_pc_url; // 카카오페이 결제 페이지로 리다이렉트
+                    } else {
+                        alert('결제 요청 실패');
+                    }
+                })
+                .catch(error => {
+                    console.error('결제 요청 오류:', error);
+                    alert('결제 요청 중 오류가 발생했습니다.');
+                });
+        }
+    </script>
+</head>
+<body>
+<h1>카카오페이 결제</h1>
+<button onclick="requestKakaoPay()">카카오페이로 결제하기</button>
+</body>
+</html>
