@@ -20,7 +20,7 @@ public enum ExceptionType {
 
     FORBIDDEN_ACTION(HttpStatus.FORBIDDEN, "권한이 없습니다."),
 
-    FILE_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 파일의 정보를 찾을 수 없습니다"),
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 파일의 정보를 찾을 수 없습니다."),
 
     UNSUPPORTED_FILE_TYPE(HttpStatus.BAD_REQUEST, "허용되지 않는 파일 형식입니다."),
 
@@ -28,8 +28,13 @@ public enum ExceptionType {
 
     ROLE_NOT_SUPPORT(HttpStatus.BAD_REQUEST, "의사는 소셜 로그인을 할 수 없습니다."),
 
-    OAUTH_GOOGLE(HttpStatus.BAD_REQUEST, "구글 계정으로 회원가입 하지 않았습니다.")
-    ;
+    OAUTH_GOOGLE(HttpStatus.BAD_REQUEST, "구글 계정으로 회원가입 하지 않았습니다."),
+
+    PAY_CANCEL(HttpStatus.BAD_REQUEST, "결제가 취소되었습니다."),
+
+    PAY_FAILED(HttpStatus.BAD_REQUEST, "결제에 실패하였습니다."),
+
+    CLINIC_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상담을 찾을 수 없습니다.");
 
 
 

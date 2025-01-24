@@ -21,7 +21,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/chatrooms")
+@RequestMapping("/api/clinic")
 @RequiredArgsConstructor
 @Slf4j
 public class ClinicController {
@@ -37,19 +37,19 @@ public class ClinicController {
         return new ResponseEntity<>(clinicService.createClinic(dto, userDetails), HttpStatus.CREATED);
     }
 
-    @MessageMapping("/chat/{chatroomId}")
-    @SendTo("/sub/chat/{chatroomId}")
-    public String sendMessage(@DestinationVariable Long chatroomId,             // MessageSendResponseDto로 수정
+    @MessageMapping("/chat/{clinicId}")
+    @SendTo("/sub/chat/{clinicId}")
+    public String sendMessage(@DestinationVariable Long clinicId,             // MessageSendResponseDto로 수정
                                               @Payload MessageSendRequestDto dto,
                                               @AuthenticationPrincipal UserDetailsImple userDetails) {
-        log.info("chatRoomId: {}, message: {}", chatroomId, dto.getMessage());
+        log.info("clinicId: {}, message: {}", clinicId, dto.getMessage());
         return dto.getMessage();
 //        return messageService.saveMessage(chatroomId, dto, userDetails);
     }
 
-    @PostMapping("/{chatroomId}")
-    public ResponseEntity<ClinicDeleteResponseDto> deleteClinic(@PathVariable Long chatroomId,
+    @PostMapping("/{clinicId}")
+    public ResponseEntity<ClinicDeleteResponseDto> deleteClinic(@PathVariable Long clinicId,
                                                                 @AuthenticationPrincipal UserDetailsImple userDetails) {
-        return new ResponseEntity<>(clinicService.deleteClinic(chatroomId, userDetails), HttpStatus.OK);
+        return new ResponseEntity<>(clinicService.deleteClinic(clinicId, userDetails), HttpStatus.OK);
     }
 }

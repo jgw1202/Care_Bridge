@@ -59,7 +59,7 @@
     const ENDPOINT = '/chat'; // WebSocket endpoint
     const SUBSCRIBE_URL = '/sub/chat'; // Subscription topic
     const PUBLISH_URL = '/pub/chat/'; // Publish URL
-    const CHATROOM_ID = 1; // Example chatroom ID
+    const CLINIC_ID = 1; // Example chatroom ID
 
     let stompClient = null;
 
@@ -71,7 +71,7 @@
             console.log('Connected: ' + frame);
 
             // Subscribe to topic
-            stompClient.subscribe('/sub/chat/'+CHATROOM_ID, function (message) {
+            stompClient.subscribe('/sub/chat/'+CLINIC_ID, function (message) {
                 showMessage(message.body);
             });
         }, function (error) {
@@ -86,8 +86,8 @@
 
         if (message && stompClient) {
             // Send a message to the server
-            stompClient.send(`${PUBLISH_URL}${CHATROOM_ID}`, {}, JSON.stringify({
-                chatroomId: CHATROOM_ID,
+            stompClient.send(`${PUBLISH_URL}${CLINIC_ID}`, {}, JSON.stringify({
+                clinicId: CLINIC_ID,
                 message: message
             }));
             messageInput.value = ''; // Clear input field
