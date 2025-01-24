@@ -41,10 +41,10 @@
 <body>
 <!-- 세로 네비게이션 바 -->
 <div class="navbar-vertical d-flex flex-column">
-    <a href="/profile.html" class="nav-link">내 정보</a>
-    <a href="/boardList.html" class="nav-link active" onclick="location.reload()">게시판</a>
-    <a href="/chat.html" class="nav-link">일대일 채팅</a>
-    <a href="/aichat.html" class="nav-link">AI 채팅</a>
+    <a href="/profile" class="nav-link">내 정보</a>
+    <a href="/boardList" class="nav-link active" onclick="location.reload()">게시판</a>
+    <a href="/chat" class="nav-link">일대일 채팅</a>
+    <a href="/aichat" class="nav-link">AI 채팅</a>
 </div>
 
 <!-- 본문 콘텐츠 -->
@@ -53,7 +53,7 @@
         <!-- 상단 헤더 -->
         <div class="d-flex justify-content-between align-items-center">
             <h1>자유게시판</h1>
-            <button class="btn btn-danger btn-sm" onclick="location.href='/logout'">로그아웃</button>
+            <button class="btn btn-danger btn-sm" onclick="logout()">로그아웃</button>
         </div>
         <hr>
 
@@ -94,5 +94,30 @@
         </table>
     </div>
 </div>
+<script>
+    function logout() {
+        // 쿠키 및 로컬 스토리지에서 인증 데이터 삭제
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        document.cookie = 'accessToken=; Max-Age=0; path=/;';
+
+        // 서버에 로그아웃 요청 (선택적)
+        fetch('/api/users/logout', {
+            method: 'POST',
+            credentials: 'include' // 쿠키 포함
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/login';
+                } else {
+                    alert('Logout failed.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during logout.');
+            });
+    }
+</script>
 </body>
 </html>
