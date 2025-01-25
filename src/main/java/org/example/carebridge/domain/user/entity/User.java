@@ -86,7 +86,7 @@ public class User extends BaseEntity {
     }
 
     public Boolean isGoogleUser() {
-        return this.oAuth == OAuth.GOOGLE;
+        return this.oAuth.equals(OAuth.GOOGLE);
     }
 
     public Boolean isPatient() {

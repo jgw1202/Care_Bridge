@@ -2,9 +2,9 @@ package org.example.carebridge.domain.user.controller;
 
 //import jakarta.validation.Valid;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.example.carebridge.domain.user.dto.doctor.DoctorListResponseDto;
 import org.example.carebridge.domain.user.dto.doctor.DoctorResponseDto;
 import org.example.carebridge.domain.user.dto.login.UserLoginRequestDto;
@@ -18,8 +18,7 @@ import org.example.carebridge.domain.user.dto.update.UserUpdateResponseDto;
 import org.example.carebridge.domain.user.entity.User;
 import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.service.UserService;
-import org.example.carebridge.global.auth.UserDetailsImple;
-import org.example.carebridge.global.exception.ExceptionType;
+import org.example.carebridge.global.auth.UserDetailsImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -77,10 +76,21 @@ public class UserController {
         return new ResponseEntity<>(userLoginResponseDto, HttpStatus.OK);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("Authorization", null);
+        cookie.setHttpOnly(true);
+//        cookie.setSecure(true); // HTTPS만 사용할 경우 추가
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // 즉시 만료
+        response.addCookie(cookie);
+        return ResponseEntity.ok().build();
+    }
+
     //프로필 사진 등록
     @PostMapping("/upload/profile-image")
     public ResponseEntity<String> uploadProfileImage(@RequestParam("profile-image") MultipartFile profileImage,
-                                                     @AuthenticationPrincipal UserDetailsImple userDetails) {
+                                                     @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         String profileImageUrl = userService.uploadProfileImage(profileImage, user);
 
@@ -90,7 +100,7 @@ public class UserController {
     //의사 면허증 등록
     @PostMapping("/upload/doctor-portfolio")
     public ResponseEntity<String> uploadDoctorPortfolio(@RequestParam("doctor-portfolio") MultipartFile portfolio,
-                                                        @AuthenticationPrincipal UserDetailsImple userDetails) {
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         String portfolioUrl = userService.uploadPortfolio(portfolio, user);
 
@@ -100,7 +110,7 @@ public class UserController {
     //회원 탈퇴
     @DeleteMapping
     public void deleteUser(@RequestBody UserDeleteRequestDto userDeleteRequestDto,
-                           @AuthenticationPrincipal UserDetailsImple userDetails) {
+                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         String password = userDeleteRequestDto.getPassword();
         userService.deleteUser(user, password);
@@ -110,9 +120,9 @@ public class UserController {
     @PatchMapping("/update-profile")
     public ResponseEntity<UserUpdateResponseDto> update(
             @RequestBody UserUpdateRequestDto userUpdateRequestDto,
-            @AuthenticationPrincipal UserDetailsImple userDetailsImple) {
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
 
-        User user = userDetailsImple.getUser();
+        User user = userDetailsImpl.getUser();
         UserUpdateResponseDto userUpdateResponseDto = userService.updateUser(userUpdateRequestDto, user);
 
         return new ResponseEntity<>(userUpdateResponseDto, HttpStatus.OK);
@@ -120,7 +130,7 @@ public class UserController {
 
     @GetMapping("/doctors")
     public ResponseEntity<List<DoctorListResponseDto>> getAllDoctor(
-            @AuthenticationPrincipal UserDetailsImple userDetails,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestParam UserRole role) {
 
         if (role != UserRole.DOCTOR) {

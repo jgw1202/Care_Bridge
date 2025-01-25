@@ -2,6 +2,7 @@ package org.example.carebridge.domain.board.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.carebridge.domain.board.dto.*;
+import org.example.carebridge.domain.board.dto.view.BoardListViewResponseDto;
 import org.example.carebridge.domain.board.entity.Board;
 import org.example.carebridge.domain.board.repository.BoardRepository;
 import org.example.carebridge.domain.user.entity.User;
@@ -50,6 +51,15 @@ public class BoardServiceImpl implements BoardService{
         List<Board> boards = boardRepository.findAll();
 
         return boards.stream().map(BoardFindResponseDto::toDto).collect(Collectors.toList());
+    }
+
+    public List<BoardListViewResponseDto> findAllBoardsUsedByView() {
+        List<Board> boards = boardRepository.findAll();  // Board 엔티티 조회
+
+        // Board 엔티티를 BoardListViewResponseDto로 변환
+        return boards.stream()
+                .map(BoardListViewResponseDto::from)  // Board에서 DTO로 변환
+                .collect(Collectors.toList());
     }
 
     // 보드 단건 조회

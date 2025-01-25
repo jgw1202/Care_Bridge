@@ -53,6 +53,21 @@ dependencies {
 
     implementation 'org.springframework.security:spring-security-messaging'
     implementation 'org.springframework.security:spring-security-config'
+
+
+    //WebSocket을 사용하여 실시간 양방향 통신을 구현하기 위한 의존성
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '3.3.1'
+
+    // mustache 탬플릿을 위한 의존
+    implementation 'org.springframework.boot:spring-boot-starter-mustache'
+
+    // Redisson 의존성
+    implementation 'org.redisson:redisson-spring-boot-starter:3.18.0'
+
+    // redis
+    implementation 'org.redisson:redisson-spring-boot-starter:3.18.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 }
 
 tasks.named('test') {

@@ -76,7 +76,9 @@ public class UserService {
                 throw new RuntimeException("이미 존재하는 유저 입니다.");
             }
         }
-
+        if(requestDto.getOAuth() != null) {
+            user.inputGoogleOAuth(requestDto.getOAuth());
+        }
         userRepository.save(user);
 
         return new UserSignupResponseDto(user.getId(), user.getEmail(), user.getUserRole(), user.getOAuth());

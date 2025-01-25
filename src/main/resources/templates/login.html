@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+
+    <style>
+        .gradient-custom {
+            background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+        }
+    </style>
+</head>
+<body class="gradient-custom">
+<section class="d-flex vh-100">
+    <div class="container-fluid row justify-content-center align-content-center">
+        <div class="card bg-dark" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+                <h2 class="text-white">LOGIN</h2>
+                <p class="text-white-50 mt-2 mb-5">서비스를 사용하려면 로그인을 해주세요!</p>
+
+                <div class="mb-2">
+                    <div class="mb-3">
+                        <label class="form-label text-white">Email address</label>
+                        <input type="email" class="form-control" id="username" placeholder="Enter your email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-white">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                    </div>
+                    <button type="button" class="btn btn-primary" id="login-button">로그인</button>
+                    <button type="button" class="btn btn-primary" onclick="location.href='/signup-patient'">환자 회원가입</button>
+                    <button type="button" class="btn btn-primary" onclick="location.href='/signup-doctor'">의사 회원가입</button>
+                    <div class="mb-3">
+                        <!-- 구글 로그인 버튼 -->
+                        <button type="button" class="btn btn-primary" id="social-login" onclick="socialLogin()">구글로 로그인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.getElementById('login-button').addEventListener('click', async () => {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // 유효성 검사
+        if (!username || !password) {
+            alert('이메일과 비밀번호를 입력해주세요.');
+            return;
+        }
+
+        // 로그인 데이터 생성
+        const loginData = {
+            email: username,
+            password: password
+        };
+
+        try {
+            const response = await fetch('/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginData),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                // 쿠키 내, AccessToken 담는 로직 작성
+                const { accessToken, refreshToken } = result;
+                if(accessToken && refreshToken) {
+                    localStorage.setItem('accessToken', accessToken);
+                    localStorage.setItem('refreshToken', refreshToken);
+                    alert('login success!');
+
+                    window.location.href ='/boardList'
+                }
+
+                // alert('로그인 성공: ' + JSON.stringify(result));
+                // 성공 시 리다이렉션 등 추가 작업
+            } else {
+                const error = await response.json();
+                alert('로그인 실패: ' + JSON.stringify(error));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('로그인 중 오류가 발생했습니다.');
+        }
+    });
+
+    function socialLogin() {
+        // 구글 OAuth2 로그인 URL로 리다이렉트
+        window.location.href = '/oauth2/authorization/google';
+
+    }
+</script>
+</body>
+</html>

@@ -12,7 +12,7 @@ import org.example.carebridge.domain.clinic.repository.ParticipationRepository;
 import org.example.carebridge.domain.user.entity.User;
 import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.repository.UserRepository;
-import org.example.carebridge.global.auth.UserDetailsImple;
+import org.example.carebridge.global.auth.UserDetailsImpl;
 import org.example.carebridge.global.exception.BadValueException;
 import org.example.carebridge.global.exception.ExceptionType;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class ClinicServiceImpl implements ClinicService {
 
     // 채팅방 생성
     @Override
-    public ClinicCreateResponseDto createClinic(ClinicCreateRequestDto dto, UserDetailsImple userDetails) {
+    public ClinicCreateResponseDto createClinic(ClinicCreateRequestDto dto, UserDetailsImpl userDetails) {
         User user = userRepository.findByIdOrElseThrow(dto.getDoctorId());
 
         // TODO : Repository로 로직 옮기기, 에러코드 확인하기
@@ -54,7 +54,7 @@ public class ClinicServiceImpl implements ClinicService {
 
     // 채팅방 삭제(기록은 남아있음)
     @Override
-    public ClinicDeleteResponseDto deleteClinic(Long chatroomId, UserDetailsImple userDetails) {
+    public ClinicDeleteResponseDto deleteClinic(Long chatroomId, UserDetailsImpl userDetails) {
         Clinic clinic = clinicRepository.findById(chatroomId).orElseThrow(() -> new IllegalArgumentException("임시 예외처리"));
         return null;
     }
