@@ -3,6 +3,7 @@ package org.example.carebridge.domain.board.service;
 import lombok.RequiredArgsConstructor;
 import org.example.carebridge.domain.board.dto.*;
 import org.example.carebridge.domain.board.dto.view.BoardListViewResponseDto;
+import org.example.carebridge.domain.board.dto.view.BoardViewResponseDto;
 import org.example.carebridge.domain.board.entity.Board;
 import org.example.carebridge.domain.board.repository.BoardRepository;
 import org.example.carebridge.domain.user.entity.User;
@@ -37,6 +38,7 @@ public class BoardServiceImpl implements BoardService{
         boardRepository.save(board);
 
         return BoardCreateResponseDto.builder()
+                .id(board.getId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .tag(board.getTag())
@@ -67,6 +69,12 @@ public class BoardServiceImpl implements BoardService{
         Board board = boardRepository.findByIdOrElseThrow(id);
 
         return BoardFindResponseDto.toDto(board);
+    }
+
+    // BoardService의 findBoardById 메서드 수정
+    public BoardViewResponseDto findBoardByIdUsedByView(Long id) {
+        Board board = boardRepository.findByIdOrElseThrow(id);
+        return BoardViewResponseDto.fromEntity(board);
     }
 
     // 보드 수정
