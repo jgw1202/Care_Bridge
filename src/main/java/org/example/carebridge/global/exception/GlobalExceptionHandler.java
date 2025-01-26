@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.security.sasl.AuthenticationException;
@@ -95,6 +96,19 @@ public class GlobalExceptionHandler {
                 .body(responseBody);
     }
 
+    // 예외를 처리할 메서드
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 적절한 HTTP 상태 코드 지정
+    public ResponseEntity<String> handleException(Exception e) {
+        // 오류 메시지 및 상태 코드 전송
+        return new ResponseEntity<>("오류 발생: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
+    @ExceptionHandler({IllegalArgumentException.class, NullPointerException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 적절한 HTTP 상태 코드 지정
+    public ResponseEntity<String> handleClientError(Exception e) {
+        // 오류 메시지 및 상태 코드 전송
+        return new ResponseEntity<>("잘못된 요청: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 
 }

@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class BoardCreateResponseDto {
+    private Long id;
     private String title;
     private String content;
     private String tag;
@@ -15,7 +16,8 @@ public class BoardCreateResponseDto {
     private LocalDateTime modifiedAt;
 
     @Builder
-    public BoardCreateResponseDto(String title, String content, String tag, Long views, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public BoardCreateResponseDto(Long id, String title, String content, String tag, Long views, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.tag = tag;

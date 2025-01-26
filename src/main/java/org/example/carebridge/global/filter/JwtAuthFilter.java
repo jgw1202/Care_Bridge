@@ -32,7 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private static final List<String> WHITE_LIST =
             List.of("/api/users/login", "/api/users/signup-patient","/api/users/signup-doctor",
                     "/login/oauth2/code/google","/chat", "/chat/**",
-                    "/login", "/signup", "/boardList");
+                    "/login", "/signup");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
