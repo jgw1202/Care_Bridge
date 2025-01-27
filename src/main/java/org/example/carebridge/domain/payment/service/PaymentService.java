@@ -9,7 +9,7 @@ import org.example.carebridge.domain.payment.entity.Payment;
 import org.example.carebridge.domain.payment.entity.PaymentMethod;
 import org.example.carebridge.domain.payment.repository.PaymentRepository;
 import org.example.carebridge.domain.user.entity.User;
-import org.example.carebridge.global.auth.UserDetailsImple;
+import org.example.carebridge.global.auth.UserDetailsImpl;
 import org.springframework.stereotype.Service;
 
 @Slf4j
