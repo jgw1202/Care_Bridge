@@ -68,10 +68,10 @@ jobs:
              -e SECRET_KEY=${{secrets.SECRET_KEY}} \
              -e DATABASE_USERNAME=${{secrets.DB_USERNAME}} \
              -e DATABASE_PASSWORD=${{secrets.DB_PASSWORD}} \
-             -e BUCKET_NAME=${{secrets.BUCKET_NAME}}
-             -e CLIENT_ID=${{secrets.CLIENT_ID}}
-             -e CLIENT_SECRET=${{secrets.CLIENT_SECRET}}
-             -e REDIRECT_URI=${{secrets.REDIRECT_URI}}
-             -e OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}}
-             -e KAKAO_PAY_SECRET_KEY=${{secrets.KAKAO_PAY_SECRET_KEY}}
+             -e BUCKET_NAME=${{secrets.BUCKET_NAME}} \
+             -e CLIENT_ID=${{secrets.CLIENT_ID}} \
+             -e CLIENT_SECRET=${{secrets.CLIENT_SECRET}} \
+             -e REDIRECT_URI=${{secrets.REDIRECT_URI}} \
+             -e OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}} \
+             -e KAKAO_PAY_SECRET_KEY=${{secrets.KAKAO_PAY_SECRET_KEY}} \
              ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_TAG_NAME }}:latest
