@@ -37,7 +37,7 @@ public class WebConfig {
             "/api/users/login", "/login/oauth2/code/google",
             "/signup", "/signup-patient", "/signup-doctor", "/signup-social",
             "/chat/**", "/pub/**", "/sub/**", "/ai",
-            "/login", "/login-social", "/boardList",
+            "/login", "/login-social",
             "/api/payments/kakaopay", "/api/payments/kakaopay/success"};
 
     private final JwtAuthFilter jwtAuthFilter;
