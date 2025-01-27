@@ -17,7 +17,7 @@ public class Message extends BaseEntity {
     private String messageContent;
 
     @Column(nullable = false)
-    private Long senderId;
+    private String sender;
 
     @ManyToOne
     @JoinColumn(name = "clinic_id")
@@ -26,9 +26,9 @@ public class Message extends BaseEntity {
     public Message() {}
 
     @Builder
-    public Message(String messageContent, Long senderId, Clinic clinic) {
+    public Message(String messageContent, String sender, Clinic clinic) {
         this.messageContent = messageContent;
-        this.senderId = senderId;
+        this.sender = sender;
         this.clinic = clinic;
     }
 }

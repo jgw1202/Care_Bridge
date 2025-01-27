@@ -54,8 +54,9 @@ public class ClinicServiceImpl implements ClinicService {
 
     // 채팅방 삭제(기록은 남아있음)
     @Override
-    public ClinicDeleteResponseDto deleteClinic(Long chatroomId, UserDetailsImpl userDetails) {
-        Clinic clinic = clinicRepository.findById(chatroomId).orElseThrow(() -> new IllegalArgumentException("임시 예외처리"));
+    public ClinicDeleteResponseDto deleteClinic(Long clinicId, UserDetailsImpl userDetails) {
+        Clinic clinic = clinicRepository.findByIdOrElseThrow(clinicId);
+        clinic.deleteClinic();
         return null;
     }
 }

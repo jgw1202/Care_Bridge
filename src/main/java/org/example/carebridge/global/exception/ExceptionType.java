@@ -20,7 +20,7 @@ public enum ExceptionType {
 
     FORBIDDEN_ACTION(HttpStatus.FORBIDDEN, "권한이 없습니다."),
 
-    FILE_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 파일의 정보를 찾을 수 없습니다"),
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND,"해당 파일의 정보를 찾을 수 없습니다."),
 
     UNSUPPORTED_FILE_TYPE(HttpStatus.BAD_REQUEST, "허용되지 않는 파일 형식입니다."),
 
@@ -32,9 +32,13 @@ public enum ExceptionType {
 
     LOGIN_METHOD_WRONG(HttpStatus.BAD_REQUEST, "회원 가입 방식이 다르니, 올바른 회원 가입 방식으로 로그인 하십시오."),
 
-    LIKE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 좋아요가 존재합니다.");
+    LIKE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 좋아요가 존재합니다."),
 
+    PAY_CANCEL(HttpStatus.BAD_REQUEST, "결제가 취소되었습니다."),
 
+    PAY_FAILED(HttpStatus.BAD_REQUEST, "결제에 실패하였습니다."),
+
+    CLINIC_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상담을 찾을 수 없습니다.");
 
 
 
