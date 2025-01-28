@@ -1,89 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-  <title>AI Chatbot Example</title>
+  <meta charset="UTF-8">
+  <title>AI Chatbot</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <style>
-    .message {
-      padding: 5px;
-      margin: 5px;
-      border-radius: 5px;
-      max-width: 80%;
+    body {
+      background-color: #f4f7f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
+
+    .chat-container {
+      width: 400px;
+      height: 600px;
+      background: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: #007bff;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    #chatArea {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      padding: 10px;
+      border-radius: 8px;
+      margin: 5px 0;
+      max-width: 75%;
+      word-wrap: break-word;
+    }
+
     .user-message {
       background-color: #DCF8C6;
+      align-self: flex-end;
       text-align: right;
-      float: right;
-      clear: both;
     }
+
     .ai-message {
       background-color: #EDEDED;
-      text-align: left;
-      float: left;
-      clear: both;
+      align-self: flex-start;
     }
-    #chatArea {
-      height: 300px;
-      overflow-y: scroll;
-      border: 1px solid black;
+
+    .chat-input {
+      display: flex;
       padding: 10px;
+      border-top: 1px solid #ccc;
+      background: #fff;
+    }
+
+    .chat-input textarea {
+      flex: 1;
+      resize: none;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .chat-input button {
+      margin-left: 10px;
+      padding: 10px 15px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .chat-input button:disabled {
+      background: #ccc;
     }
   </style>
 </head>
 <body>
-<div class="container">
-  <h1>Chatbot Example</h1>
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#chatModal">
-    Open Chat
-  </button>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="chatModalLabel">Chat with AI</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div>
-          <label for="username">Username:</label>
-          <input type="text" id="username"/>
-          <button id="connectBtn" class="btn btn-secondary">Connect</button>
-        </div>
-        <br/>
-        <div id="chatArea"></div>
-        <br/>
-        <div>
-          <textarea id="message" rows="3" cols="40"></textarea>
-          <br/>
-          <button id="sendBtn" class="btn btn-primary" disabled>Send</button>
-        </div>
-      </div>
-    </div>
+<div class="chat-container">
+  <div class="chat-header">💬 Care-Bridge 챗봇</div>
+  <div id="chatArea"></div>
+  <div class="chat-input">
+    <textarea id="message" rows="1" placeholder="메시지를 입력하세요..."></textarea>
+    <button id="sendBtn" disabled>전송</button>
   </div>
 </div>
-<script type="text/javascript">
+
+<script>
   var stompClient = null;
 
   function connect() {
-    var username = $('#username').val().trim();
-    if (!username) {
-      alert('Please enter a username.');
-      return;
-    }
     var socket = new SockJS('/chat');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function(frame) {
       console.log('Connected: ' + frame);
-      $('#connectBtn').prop('disabled', true);
       $('#sendBtn').prop('disabled', false);
       stompClient.subscribe('/sub/messages', function(response) {
         showMessage(JSON.parse(response.body));
@@ -93,45 +121,50 @@
 
   function sendMessage() {
     var messageContent = $('#message').val().trim();
-    var username = $('#username').val().trim();
     if (!messageContent) {
-      alert('Message cannot be empty.');
       return;
     }
+
     if (stompClient && stompClient.connected) {
       var chatMessage = {
         content: messageContent,
-        sender: username
+        sender: "나"
       };
       stompClient.send('/pub/chat.sendMessage', {}, JSON.stringify(chatMessage));
       $('#message').val('');
       showUserMessage(chatMessage);
     } else {
-      alert('WebSocket connection is not established.');
+      alert('서버에 연결되지 않았습니다.');
     }
   }
 
   function showMessage(message) {
     var messageElement = $('<div class="message ai-message"></div>');
-    messageElement.text(message.sender + ': ' + message.content);
+    messageElement.text("AI: " + message.content);
     $('#chatArea').append(messageElement);
-    $('#chatArea').scrollTop($('#chatArea')[0].scrollHeight);
+    scrollToBottom();
   }
 
   function showUserMessage(message) {
     var messageElement = $('<div class="message user-message"></div>');
-    messageElement.text(message.sender + ': ' + message.content);
+    messageElement.text("나: " + message.content);
     $('#chatArea').append(messageElement);
+    scrollToBottom();
+  }
+
+  function scrollToBottom() {
     $('#chatArea').scrollTop($('#chatArea')[0].scrollHeight);
   }
 
   $(function () {
-    $('form').on('submit', function (e) {
-      e.preventDefault();
+    connect();
+    $('#message').on('keyup', function(event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
     });
-    $('#connectBtn').click(function() {
-      connect();
-    });
+
     $('#sendBtn').click(function() {
       sendMessage();
     });

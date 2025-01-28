@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AiChatViewController {
 
-    @GetMapping("/ai")
+    @GetMapping("/aichat")
     public String aichat() {
         return "aichat";
     }
