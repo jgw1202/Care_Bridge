@@ -54,6 +54,7 @@ jobs:
           key : ${{ secrets.EC2_KEY }}
           port : 22
           source: "docker-compose.yml"
+          target: "/home/ec2-user"
 
 
       # Deploy and docker-compose up and down
@@ -61,7 +62,7 @@ jobs:
       - name: SSH Commands
         uses: appleboy/ssh-action@v0.1.6
         env:
-          COMPOSE: "/docker-compose.yml"
+          COMPOSE: "/home/ec2-user/docker-compose.yml"
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}  # EC2 인스턴스 기본 사용자
