@@ -69,7 +69,7 @@ public class UserController {
                 .secure(false)
                 .path("/")
                 .maxAge(3600)
-                .sameSite("None")
+//                .sameSite("None")
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
