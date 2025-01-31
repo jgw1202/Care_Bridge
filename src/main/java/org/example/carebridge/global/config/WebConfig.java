@@ -55,7 +55,7 @@ public class WebConfig {
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "CONNECT", "SEND", "OPTIONS"));
                     corsConfig.setAllowedHeaders(List.of("*"));
                     corsConfig.setAllowCredentials(true); // 쿠키 전달을 허용
-                    corsConfig.setAllowedOrigins(List.of("http://localhost:63342", "http://localhost:8080"));
+                    corsConfig.setAllowedOrigins(List.of("http://localhost:63342", "http://localhost:8080", "http://ec2-43-203-243-238.ap-northeast-2.compute.amazonaws.com:63342", "http://ec2-43-203-243-238.ap-northeast-2.compute.amazonaws.com:8080"));
                     return corsConfig;
                 }))
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
