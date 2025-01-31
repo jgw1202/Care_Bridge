@@ -69,8 +69,15 @@ jobs:
           script_stop: true
           script: |
             cd /home/ec2-user
-            sudo docker-compose down --rmi all --volumes --remove-orphans
+
+            # 기존 애플리케이션 컨테이너만 삭제 (MySQL, Redis 유지)
+            sudo docker-compose stop app
+            sudo docker-compose rm -f app
+
+            # 최신 이미지 Pull
             sudo docker-compose pull
+
+            # 애플리케이션만 다시 실행 (MySQL, Redis 유지)
             sudo docker-compose up -d
 
 #            # 기존 컨테이너 중지 및 제거
