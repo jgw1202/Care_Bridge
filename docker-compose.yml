@@ -3,7 +3,7 @@ services:
   app:
     env_file:
       - .env
-    image: care-bridge  # Docker Hub에서 herokim97/codesix 이미지를 사용
+    image: herokim97/care-bridge  # Docker Hub에서 herokim97/codesix 이미지를 사용
     ports:
       - "8080:8080"
 
@@ -22,9 +22,9 @@ services:
     image: mysql:8.0  # 공식 MySQL 이미지 사용
     environment:
       MYSQL_DATABASE: care_bridge
-      MYSQL_ROOT_PASSWORD: gksl671456!
-      DATABASE_USERNAME: root
-      DATABASE_PASSWORD: gksl671456!
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      DATABASE_USERNAME: ${DB_USERNAME}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     volumes:

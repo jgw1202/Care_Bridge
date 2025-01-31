@@ -75,7 +75,8 @@ jobs:
             
             # 새로운 image pull 이후, compose up
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_TAG_NAME }}:latest
-            sudo docker-compose -f $COMPOSE up -d
+            sudo docker-compose -f $COMPOSE up -d 
+
 #            # 기존 컨테이너 중지 및 제거
 #             CONTAINER_ID=$(sudo docker ps -q --filter "publish=8080-8080")
 #             if [ ! -z "$CONTAINER_ID" ]; then
