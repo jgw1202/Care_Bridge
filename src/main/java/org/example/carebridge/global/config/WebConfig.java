@@ -36,7 +36,7 @@ public class WebConfig {
     private static final String[] WHITE_LIST = {"/api/users/signup-patient", "/api/users/signup-doctor",
             "/api/users/login", "/login/oauth2/code/google",
             "/signup", "/signup-patient", "/signup-doctor", "/signup-social",
-            "/chat/**", "/pub/**", "/sub/**", "/ai",
+            "/chat/**", "/pub/**", "/sub/**",
             "/login", "/login-social",
             "/api/payments/kakaopay", "/api/payments/kakaopay/success"};
 
