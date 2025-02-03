@@ -4,5 +4,6 @@ public enum PaymentStatus {
 
     CANCEL,
     PENDING,
-    COMPLETE
+    COMPLETE,
+    NOT_EXIST
 }

@@ -2,6 +2,8 @@ package org.example.carebridge.domain.payment.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.carebridge.domain.clinichistory.enums.PaymentStatus;
+import org.example.carebridge.domain.payment.dto.refund.KakaoPayRefundResponseDto;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.example.carebridge.domain.payment.dto.approve.KakaoPayApproveResponseDto;
@@ -82,7 +84,30 @@ public class KakaoPayService {
         String url = "https://open-api.kakaopay.com/online/v1/payment/approve";
         KakaoPayApproveResponseDto approveResponseDto = template.postForObject(url, requestEntity, KakaoPayApproveResponseDto.class);
 
+        paymentRepository.findByOrderId(orderId).updatePaymentStatus(PaymentStatus.COMPLETE);
+
         return approveResponseDto;
+    }
+
+    public KakaoPayRefundResponseDto payRefund(Long clinicId) {
+        Map<String, String> parameters = new HashMap<>();
+
+        Payment payment = paymentRepository.findByClinicId(clinicId);
+
+        parameters.put("cid", "TC0ONETIME");
+        parameters.put("tid", payment.getTid());
+        parameters.put("cancel_amount", payment.getPrice().toString());
+        parameters.put("cancel_tax_free_amount", "0");
+
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
+
+        RestTemplate template = new RestTemplate();
+        String url = "https://open-api.kakaopay.com/online/v1/payment/cancel";
+        KakaoPayRefundResponseDto refundResponseDto = template.postForObject(url, requestEntity, KakaoPayRefundResponseDto.class);
+
+        paymentRepository.findByClinicId(clinicId).updatePaymentStatus(PaymentStatus.CANCEL);
+
+        return refundResponseDto;
     }
 
     private HttpHeaders getHeaders() {

@@ -5,5 +5,5 @@ import lombok.Getter;
 
 @Getter
 public class ClinicCreateRequestDto {
-    private Long doctorId;
+    private Long id;
 }

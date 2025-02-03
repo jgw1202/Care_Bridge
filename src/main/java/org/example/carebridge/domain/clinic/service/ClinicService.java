@@ -9,5 +9,7 @@ public interface ClinicService {
 
     ClinicCreateResponseDto createClinic(ClinicCreateRequestDto dto, UserDetailsImpl userDetails);
 
+    ClinicCreateResponseDto participateClinic(ClinicCreateRequestDto dto, UserDetailsImpl userDetails);
+
     ClinicDeleteResponseDto deleteClinic(Long chatroomId, UserDetailsImpl userDetails);
 }

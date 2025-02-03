@@ -5,12 +5,14 @@ import lombok.Getter;
 
 @Getter
 public class ClinicCreateResponseDto {
+    private Long clinicId;
     private String patientName;
     private String doctorName;
     private String clinicName;
 
     @Builder
-    public ClinicCreateResponseDto(String patientName, String doctorName, String clinicName) {
+    public ClinicCreateResponseDto(Long clinicId, String patientName, String doctorName, String clinicName) {
+        this.clinicId = clinicId;
         this.patientName = patientName;
         this.doctorName = doctorName;
         this.clinicName = clinicName;
