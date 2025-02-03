@@ -9,7 +9,8 @@ import java.util.List;
 public enum UserRole {
 
     USER("user"),
-    DOCTOR("doctor")
+    DOCTOR("doctor"),
+    ADMIN("admin");
     ;
 
 
