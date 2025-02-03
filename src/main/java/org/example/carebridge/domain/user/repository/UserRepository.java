@@ -2,6 +2,7 @@ package org.example.carebridge.domain.user.repository;
 
 import org.example.carebridge.domain.user.dto.doctor.DoctorListResponseDto;
 import org.example.carebridge.domain.user.dto.doctor.DoctorResponseDto;
+import org.example.carebridge.domain.user.dto.patient.PatientResponseDto;
 import org.example.carebridge.domain.user.entity.User;
 import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.global.exception.ExceptionType;
@@ -39,4 +40,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
         return findById(id).orElseThrow(()-> new NotFoundException(ExceptionType.USER_NOT_FOUND));
     }
 
+    @Query("select new org.example.carebridge.domain.user.dto.patient.PatientResponseDto(u.id, u.userName, u.address, u.phoneNum) " +
+            "from User u " +
+            "join Participation p on u = p.user " +
+            "where p.clinic = (select p2.clinic from Participation p2 where p2.user = :user) and u.userRole = :userRole")
+    List<PatientResponseDto> findAllByParticipation(User user, UserRole userRole);
 }

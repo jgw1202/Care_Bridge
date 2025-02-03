@@ -4,6 +4,9 @@ import org.example.carebridge.domain.clinic.entity.Clinic;
 import org.example.carebridge.global.exception.ExceptionType;
 import org.example.carebridge.global.exception.NotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.Optional;
 
 public interface ClinicRepository extends JpaRepository<Clinic, Long> {
 

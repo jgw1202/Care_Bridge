@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import org.example.carebridge.domain.clinic.entity.Clinic;
+import org.example.carebridge.domain.clinichistory.enums.PaymentStatus;
 import org.example.carebridge.global.entity.BaseEntity;
 
 @Entity
@@ -34,15 +35,23 @@ public class Payment extends BaseEntity {
     @JoinColumn(name = "clinic_id")
     private Clinic clinic;
 
+    @Column(nullable = false)
+    private PaymentStatus paymentStatus;
+
     public Payment() {}
 
     @Builder
-    public Payment(PaymentMethod paymentMethod, String orderId, String tid, String paymentInfo, Integer price, Clinic clinic) {
+    public Payment(PaymentMethod paymentMethod, String orderId, String tid, String paymentInfo, Integer price, PaymentStatus paymentStatus,Clinic clinic) {
         this.paymentMethod = paymentMethod;
         this.orderId = orderId;
         this.tid = tid;
         this.paymentInfo = paymentInfo;
         this.price = price;
+        this.paymentStatus = paymentStatus;
         this.clinic = clinic;
+    }
+
+    public void updatePaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 }

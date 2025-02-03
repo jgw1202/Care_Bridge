@@ -4,12 +4,15 @@ package org.example.carebridge.domain.user.entity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import org.example.carebridge.domain.clinic.entity.Participation;
 import org.example.carebridge.domain.user.enums.OAuth;
 import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.enums.UserStatus;
 import org.example.carebridge.global.entity.BaseEntity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -49,6 +52,9 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private OAuth oAuth = OAuth.LOCAL;
+
+    @OneToMany(mappedBy = "user")
+    private final List<Participation> participations = new ArrayList<>();
 
     public User() {
     }

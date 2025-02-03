@@ -64,7 +64,7 @@ public class WebConfig {
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR).permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/users/upload/doctor-portfolio").hasRole("DOCTOR")
-                                .requestMatchers("/chat/**").permitAll()
+                                .requestMatchers("/chat/**").authenticated()
                                 .anyRequest().authenticated()
 
                 )

@@ -5,11 +5,13 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.carebridge.domain.user.entity.User;
-import org.example.carebridge.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -17,6 +19,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.springframework.util.StringUtils;
 
 
@@ -34,7 +38,7 @@ public class JwtUtil {
     @Value("${jwt.refresh.expiration}")
     private Long refreshTokenExpiryMillis;
 
-    private final UserRepository userRepository;
+    private final UserDetailsService userDetailsService;
 
     //Jwt 검증 로직
     public boolean validToken(String token) throws JwtException {
@@ -114,13 +118,10 @@ public class JwtUtil {
     public Authentication getAuthentication(String token) {
         Claims claims = this.getClaims(token);
         String username = claims.getSubject();
-        String role = claims.get("role", String.class);
+        log.info("인증된 사용자 id: {}", username);
 
-        User user = userRepository.findByIdOrElseThrow(Long.parseLong(username));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(getUserName(token));
 
-        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
-
-        return new UsernamePasswordAuthenticationToken(user, token, authorities);
+        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
-
 }

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>의사 선택</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <style>
+    body {
+      display: flex;
+    }
+    .content-container {
+      padding: 20px;
+      width: 100%;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      text-align: center;
+      padding: 8px;
+      cursor: pointer;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    tr.selected {
+      background-color: #dcdcdc; /* 선택된 셀의 배경색 */
+    }
+  </style>
+</head>
+
+<body>
+<div class="content-container">
+  <div class="container mt-5">
+    <table class="table table-bordered text-center">
+      <thead class="thead-light">
+      <tr>
+        <th>이름</th>
+        <th>분야</th>
+        <th>병원</th>
+        <th>전화번호</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="doctor : ${doctors}"
+          th:attr="data-id=${doctor.id}">
+        <td th:text="${doctor.doctorName}"></td>
+        <td th:text="${doctor.category}"></td>
+        <td th:text="${doctor.hospitalName}"></td>
+        <td th:text="${doctor.phoneNumber}"></td>
+      </tr>
+
+      <tr th:if="${doctors.isEmpty()}">
+        <td colspan="6">상담 가능한 의사가 없습니다.</td>
+      </tr>
+      </tbody>
+    </table>
+    <button onclick="selectDoctor()">의사 변경</button>
+  </div>
+</div>
+<script>
+  let selectedData = null;
+
+  // 모든 테이블 행(tr)에 클릭 이벤트 추가
+  document.querySelectorAll('tbody tr').forEach(row => {
+    row.addEventListener('click', function () {
+      // 기존에 선택된 행이 있다면 선택 해제
+      document.querySelectorAll('tbody tr').forEach(tr => tr.classList.remove('selected'));
+      // 현재 선택된 행에 'selected' 클래스 추가
+      this.classList.add('selected');
+
+      // 선택된 행의 데이터를 콘솔에 출력 (선택사항)
+      selectedData = {
+        id : this.getAttribute('data-id'),
+        name: this.children[0].innerText, // 이름
+        category: this.children[1].innerText, // 분야
+        hospital: this.children[2].innerText, // 병원
+      }
+      console.log(`선택된 데이터: ${selectedData.join(', ')}`);
+    });
+  });
+
+  function selectDoctor() {
+    if (!selectedData) {
+      alert('선택된 의사가 없습니다.');
+      return;
+    }
+
+    // 부모 창으로 데이터 전달
+    if (window.opener) {
+      window.opener.setSelectedDoctor(selectedData)
+    }
+
+    // 팝업 창 닫기
+    window.close();
+  }
+</script>
+</body>
+</html>
