@@ -1,30 +1,30 @@
-<div>
-    <input th:value="${accessToken}" type="hidden" id="accessToken">
-    <input th:value="${refreshToken}" type="hidden" id="refreshToken">
-</div>
+<!--<div>-->
+<!--    <input th:value="${accessToken}" type="hidden" id="accessToken">-->
+<!--    <input th:value="${refreshToken}" type="hidden" id="refreshToken">-->
+<!--</div>-->
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        try {
-            // Thymeleaf에서 서버로부터 전달된 accessToken과 refreshToken을 변수에 할당
-            const accessToken = document.getElementById('accessToken').value;
-            const refreshToken = document.getElementById('refreshToken').value;
+        // try {
+        //     // Thymeleaf에서 서버로부터 전달된 accessToken과 refreshToken을 변수에 할당
+        //     const accessToken = document.getElementById('accessToken').value;
+        //     const refreshToken = document.getElementById('refreshToken').value;
+        //
+        //     // accessToken과 refreshToken이 존재하는지 확인
+        //     if (accessToken && refreshToken) {
+        //         // 로컬 스토리지에 저장
+        //         localStorage.setItem('accessToken', accessToken);
+        //         localStorage.setItem('refreshToken', refreshToken);
 
-            // accessToken과 refreshToken이 존재하는지 확인
-            if (accessToken && refreshToken) {
-                // 로컬 스토리지에 저장
-                localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('refreshToken', refreshToken);
-
-                alert('Login success!');
+                alert('Login success!!');
                 // 대시보드로 리다이렉트
                 window.location.href = '/boardList';
-            } else {
-                throw new Error('Tokens are missing.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('로그인 중 오류가 발생했습니다.');
-        }
+        //     } else {
+        //         throw new Error('Tokens are missing.');
+        //     }
+        // } catch (error) {
+        //     console.error('Error:', error);
+        //     alert('로그인 중 오류가 발생했습니다.');
+        // }
     });
 </script>

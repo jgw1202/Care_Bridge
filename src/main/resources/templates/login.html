@@ -61,6 +61,7 @@
         try {
             const response = await fetch('/api/users/login', {
                 method: 'POST',
+                credentials: 'include',  // 쿠키 포함
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -68,19 +69,16 @@
             });
 
             if (response.ok) {
+                // 로그인 성공 후 서버에서 쿠키를 받아옴
                 const result = await response.json();
-                // 쿠키 내, AccessToken 담는 로직 작성
                 const { accessToken, refreshToken } = result;
-                if(accessToken && refreshToken) {
-                    localStorage.setItem('accessToken', accessToken);
-                    localStorage.setItem('refreshToken', refreshToken);
-                    alert('login success!');
+                console.log(accessToken);
+                alert('로그인 성공!#');
+                console.log(accessToken);
 
-                    window.location.href ='/boardList'
-                }
+                //
+                window.location.href = '/boardList';  // 로그인 성공 후 리다이렉션
 
-                // alert('로그인 성공: ' + JSON.stringify(result));
-                // 성공 시 리다이렉션 등 추가 작업
             } else {
                 const error = await response.json();
                 alert('로그인 실패: ' + JSON.stringify(error));

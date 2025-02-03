@@ -103,6 +103,10 @@ public class User extends BaseEntity {
         return this.userRole == UserRole.DOCTOR;
     }
 
+    public Boolean isActive() {
+        return this.userStatus == UserStatus.ACTIVE;
+    }
+
     //
 
 

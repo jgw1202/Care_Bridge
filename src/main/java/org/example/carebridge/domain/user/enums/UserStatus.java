@@ -8,7 +8,8 @@ public enum UserStatus {
 
     ACTIVE("active"),
     PENDING("pending"),
-    DELETE("delete");
+    DELETE("delete"),
+    REPORT("report");
 
     private final String name;
 

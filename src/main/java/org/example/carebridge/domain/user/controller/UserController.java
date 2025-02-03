@@ -66,9 +66,10 @@ public class UserController {
         //언젠간 삭제됨(배포시)
         ResponseCookie cookie = ResponseCookie.from("Authorization", userLoginResponseDto.getAccessToken())
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
                 .maxAge(3600)
+//                .sameSite("None")
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
