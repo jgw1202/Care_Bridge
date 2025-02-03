@@ -1,6 +1,7 @@
 package org.example.carebridge.domain.clinic.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.carebridge.domain.clinic.dto.createclinic.ClinicCreateRequestDto;
 import org.example.carebridge.domain.clinic.dto.createclinic.ClinicCreateResponseDto;
 import org.example.carebridge.domain.clinic.dto.deletemessage.ClinicDeleteResponseDto;
@@ -17,8 +18,11 @@ import org.example.carebridge.global.exception.BadValueException;
 import org.example.carebridge.global.exception.ExceptionType;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClinicServiceImpl implements ClinicService {
 
     private final UserRepository userRepository;
@@ -28,28 +32,67 @@ public class ClinicServiceImpl implements ClinicService {
     // 채팅방 생성
     @Override
     public ClinicCreateResponseDto createClinic(ClinicCreateRequestDto dto, UserDetailsImpl userDetails) {
-        User user = userRepository.findByIdOrElseThrow(dto.getDoctorId());
+        User doctor = userRepository.findByIdOrElseThrow(dto.getId());
 
         // TODO : Repository로 로직 옮기기, 에러코드 확인하기
-        if (!user.getUserRole().equals(UserRole.DOCTOR)) {
+        if (!doctor.getUserRole().equals(UserRole.DOCTOR)) {
             throw new BadValueException(ExceptionType.USER_NOT_FOUND);
         }
 
+        Optional<Participation> existingParticipation = participationRepository.findByUserAndClinic(doctor, userDetails.getUser());
+
+        if (existingParticipation.isPresent()) {
+            // 기존 Clinic이 있을 경우 해당 Clinic 반환
+            Clinic existingClinic = existingParticipation.get().getClinic();
+            log.info("유저 정보 : {}", userDetails.getUser());
+            return ClinicCreateResponseDto.builder()
+                    .clinicId(existingClinic.getId())
+                    .patientName(userDetails.getUser().getUserName())
+                    .doctorName(doctor.getUserName())
+                    .clinicName(existingClinic.getName())
+                    .build();
+        }
+
         Clinic clinic = Clinic.builder()
-                .name(user.getUserName() + " 의사와의 상담 : 환자 " + userDetails.getUser().getUserName())
+                .name(doctor.getUserName() + " 의사와의 상담 : 환자 " + userDetails.getUser().getUserName())
                 .clinicStatus(ClinicStatus.NORMAL)
                 .build();
 
-        Participation participation = new Participation(user, clinic);
-
         clinicRepository.save(clinic);
-        participationRepository.save(participation);
+
+        Participation doctorParticipation = new Participation(doctor, clinic);
+        Participation patientParticipation = new Participation(userDetails.getUser(), clinic);
+
+        participationRepository.save(doctorParticipation);
+        participationRepository.save(patientParticipation);
 
         return ClinicCreateResponseDto.builder()
+                .clinicId(clinic.getId())
                 .patientName(userDetails.getUsername())
-                .doctorName(user.getUserName())
+                .doctorName(doctor.getUserName())
                 .clinicName(clinic.getName())
                 .build();
+    }
+
+    @Override
+    public ClinicCreateResponseDto participateClinic(ClinicCreateRequestDto dto, UserDetailsImpl userDetails) {
+        User patient = userRepository.findByIdOrElseThrow(dto.getId());
+
+        Optional<Participation> existingParticipation = participationRepository.findByUserAndClinic(userDetails.getUser(), patient);
+
+        if (existingParticipation.isPresent()) {
+            // 기존 Clinic이 있을 경우 해당 Clinic 반환
+            Clinic existingClinic = existingParticipation.get().getClinic();
+            log.info("유저 정보 : {}", userDetails.getUser());
+            return ClinicCreateResponseDto.builder()
+                    .clinicId(existingClinic.getId())
+                    .patientName(patient.getUserName())
+                    .doctorName(userDetails.getUser().getUserName())
+                    .clinicName(existingClinic.getName())
+                    .build();
+        } else {
+            throw new BadValueException(ExceptionType.USER_NOT_FOUND);
+        }
     }
 
     // 채팅방 삭제(기록은 남아있음)
