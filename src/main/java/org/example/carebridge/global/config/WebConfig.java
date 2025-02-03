@@ -55,7 +55,7 @@ public class WebConfig {
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "CONNECT", "SEND", "OPTIONS"));
                     corsConfig.setAllowedHeaders(List.of("*"));
                     corsConfig.setAllowCredentials(true); // 쿠키 전달을 허용
-                    corsConfig.setAllowedOrigins(List.of("http://localhost:63342", "http://localhost:8080"));
+                    corsConfig.setAllowedOrigins(List.of("http://localhost:8080"));
                     return corsConfig;
                 }))
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
@@ -64,7 +64,7 @@ public class WebConfig {
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR).permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/users/upload/doctor-portfolio").hasRole("DOCTOR")
-                                .requestMatchers("/chat/**").permitAll()
+                                .requestMatchers("/chat/**").authenticated()
                                 .anyRequest().authenticated()
 
                 )

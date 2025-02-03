@@ -18,7 +18,7 @@ import java.util.Map;
 public class OpenAIService {
 
     // application.properties 에서 api key 주입
-    @Value("${openai.api.key}")
+    @Value("${spring.ai.openai.api-key}")
     private String apiKey;
 
     // 요청 api 주소

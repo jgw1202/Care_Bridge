@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  <title>결제 요청</title>
+</head>
+<body>
+  <h2>결제 요청</h2>
+  <p id="clinicIdDisplay"></p>
+  <label>금액:</label>
+  <input type="number" id="price"><br><br>
+  <label>설명:</label>
+  <input type="text" id="paymentInfo"><br><br>
+  <button onclick="submitPayment()">확인</button>
+  <button onclick="window.close()">취소</button>
+  <script>
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    window.onload = function () {
+      clinicId = getQueryParam("clinicId");
+      console.log("URL에서 가져온 clinicId:", clinicId);
+      document.getElementById("clinicIdDisplay").innerText = "Clinic ID: " + clinicId;
+    };
+
+    function submitPayment() {
+      const paymentInfo = document.getElementById("paymentInfo").value;
+      const price = document.getElementById("price").value;
+
+      console.log("결제 요청 시작")
+      if (!paymentInfo || !price) {
+        alert("금액과 설명을 입력하세요.");
+        return;
+      }
+
+      console.log("결제 요청 시작")
+      fetch(`/api/payments/`+clinicId, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json" // JSON 형식 명시
+        },
+        credentials: 'include', // 쿠키 포함
+        body: JSON.stringify({
+          price: price,
+          paymentInfo: paymentInfo
+        })
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("결제 요청 실패");
+          }
+          console.log("결제 요청 성공")
+          return response.json();
+      })
+        .then(() => {
+          alert("결제 요청이 정상적으로 완료되었습니다.");
+          window.opener.updatePaymentButton();
+          window.close();
+      })
+        .catch(error => {
+          console.error("결제 요청 오류:", error);
+        });
+    }
+  </script>
+</body>
+</html>

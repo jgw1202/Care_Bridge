@@ -1,4 +1,4 @@
-package org.example.carebridge.domain.clinic.dto.getMessage;
+package org.example.carebridge.domain.clinic.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -22,3 +22,4 @@ public class MessageGetResponseDto {
                 .build();
     }
 }
+

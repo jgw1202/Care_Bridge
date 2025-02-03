@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Care-Bridge</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <style>
+    body {
+      display: flex;
+    }
+    .navbar-vertical {
+      height: 100vh;
+      width: 200px;
+      background-color: #f8f9fa;
+      border-right: 1px solid #dee2e6;
+      position: fixed;
+    }
+    .navbar-vertical .nav-link {
+      font-size: 18px;
+      color: #495057;
+      padding: 15px;
+      text-align: center;
+    }
+    .navbar-vertical .nav-link:hover {
+      background-color: #e9ecef;
+      color: #007bff;
+      text-decoration: none;
+    }
+    .navbar-vertical .active {
+      background-color: #e9ecef;
+      color: #007bff;
+      font-weight: bold;
+    }
+    .content-container {
+      margin-left: 220px; /* Space for the navigation bar */
+      padding: 20px;
+      width: 100%;
+    }
+    #chat {
+      width: 450px;
+      height: 700px;
+      margin: 20px auto;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      display: none;
+    }
+    #messages {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      height: 500px;
+      overflow-y: scroll;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+    }
+    #messages li {
+      margin-bottom: 10px;
+    }
+    #messageInput {
+      width: 80%;
+      padding: 10px;
+      margin-right: 5px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .card {
+      margin: auto auto;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<!-- 세로 네비게이션 바 -->
+<div class="navbar-vertical d-flex flex-column">
+  <a href="/profile" class="nav-link">내 정보</a>
+  <a href="/boardList" class="nav-link">게시판</a>
+  <a href="/clinic" class="nav-link active" onclick="location.reload()">일대일 채팅</a>
+  <a href="/aichat" class="nav-link">AI 채팅</a>
+</div>
+
+<!-- 본문 콘텐츠 -->
+<div class="content-container">
+  <div class="container mt-5">
+    <!-- 상단 헤더 -->
+    <div class="d-flex justify-content-between align-items-center">
+      <h1>일대일 채팅</h1>
+      <button class="btn btn-danger btn-sm" onclick="logout()">로그아웃</button>
+    </div>
+    <hr>
+
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="card" style="width: 30rem;">
+        <div class="card-body" style="height: 30rem;">
+          <img src="..." class="card-img-top" alt="...">
+        </div>
+        <ul class="list-group list-group-flush">
+          <p class="list-group-item"><span>의사 : </span><span id="selectedDoctorName"></span></p>
+          <p class="list-group-item"><span>분야 : </span><span id="selectedDoctorCategory"></span></p>
+          <p class="list-group-item"><span>병원 : </span><span id="selectedDoctorHospital"></span></p>
+        </ul>
+        <div class="card-body">
+          <button onclick="openPopup()">의사 변경</button>
+          <button onclick="startChat()">상담 요청</button>
+          <button onclick="">결제하기</button>
+        </div>
+      </div>
+
+      <div id="chat">
+        <h1><span id="chatTitle"></span></h1>
+        <ul id="messages"></ul>
+        <input type="text" id="messageInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const ENDPOINT = '/chat'; // WebSocket endpoint
+  const SUBSCRIBE_URL = '/sub/chat'; // Subscription topic
+  const PUBLISH_URL = '/pub/chat/'; // Publish URL
+
+  let stompClient = null;
+  let selectedDoctorId = null;
+  let clinicId = null; // 상담 아이디
+
+  function connect() {
+    const socket = new SockJS('http://localhost:8080/chat');
+    stompClient = Stomp.over(socket);
+
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      console.error("JWT 토큰이 없습니다.");
+      return;
+    }
+
+    console.log("WebSocket 연결 시 JWT 토큰:", accessToken);
+
+    stompClient.connect(
+        {Authorization: `Bearer ${accessToken}`},
+        function (frame) {
+          console.log('Connected: ' + frame);
+
+          // Subscribe to topic
+          stompClient.subscribe('/sub/chat/'+clinicId, function (message) {
+            showMessage(message.body);
+          });
+        },
+      function (error) {
+        console.log('Connection lost. Reconnecting...');
+        //setTimeout(connect, 5000); // 5초 후 재연결 시도
+    });
+  }
+
+  function sendMessage() {
+    const messageInput = document.getElementById('messageInput');
+    const message = messageInput.value.trim();
+
+    if (message && stompClient) {
+      // Send a message to the server
+      stompClient.send(`${PUBLISH_URL}${clinicId}`, {}, JSON.stringify({
+        clinicId: clinicId,
+        message: message
+      }));
+      messageInput.value = ''; // Clear input field
+    }
+  }
+
+  function showMessage(message) {
+    const messages = document.getElementById('messages');
+    const messageElement = document.createElement('li');
+    messageElement.textContent = message;
+    messages.appendChild(messageElement);
+
+    // Scroll to the latest message
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function openPopup() {
+    window.open("/clinic/popup", "의사 변경",
+            "width=600, height=400, left=200, top=200, scrollbars=yes")
+  }
+
+  function startChat() {
+    // 채팅방 활성화
+    const chat = document.getElementById('chat');
+    chat.style.display = 'block';
+
+    fetch('/api/clinic', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json" // JSON 형식 명시
+      },
+      credentials: 'include', // 쿠키 포함
+      body: JSON.stringify({id: selectedDoctorId})
+    }).then(response => {
+      if (!response.ok) {
+        // 응답이 정상(200~299)이 아닌 경우, JSON이 아닐 수도 있으므로 텍스트로 먼저 읽음
+        return response.text().then(text => {
+          throw new Error(`서버 오류: ${text}`); // 예외 발생
+        });
+      }
+      return response.json(); // 정상적인 JSON 응답 처리
+    }).then(data => {
+      document.querySelector('#chatTitle').innerText = `${data.clinicName}`
+      clinicId = `${data.clinicId}`;
+      console.log('상담 아이디 : ',clinicId);
+      // WebSocket 연결
+      connect();
+    }).catch(error => {
+      console.error('Fetch 에러:', error);
+      alert(`오류 발생: ${error.message}`);
+    });
+  }
+
+  function setSelectedDoctor(doctor) {
+    console.log('선택된 의사 정보:', doctor);
+
+    // 선택된 의사의 정보를 화면에 표시하거나 저장
+    document.querySelector('#selectedDoctorName').innerText = doctor.name;
+    document.querySelector('#selectedDoctorCategory').innerText = doctor.category;
+    document.querySelector('#selectedDoctorHospital').innerText = doctor.hospital;
+    selectedDoctorId = doctor.id;
+  }
+
+  function logout() {
+    // 쿠키 및 로컬 스토리지에서 인증 데이터 삭제
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    document.cookie = 'accessToken=; Max-Age=0; path=/;';
+
+    // 서버에 로그아웃 요청 (선택적)
+    fetch('/api/users/logout', {
+      method: 'POST',
+      credentials: 'include' // 쿠키 포함
+    })
+            .then(response => {
+              if (response.ok) {
+                window.location.href = '/login';
+              } else {
+                alert('Logout failed.');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('An error occurred during logout.');
+            });
+  }
+</script>
+</body>
+</html>
