@@ -38,7 +38,11 @@ public enum ExceptionType {
 
     PAY_FAILED(HttpStatus.BAD_REQUEST, "결제에 실패하였습니다."),
 
-    CLINIC_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상담을 찾을 수 없습니다.");
+    CLINIC_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상담을 찾을 수 없습니다."),
+
+    PAYMENT_EXISTED(HttpStatus.BAD_REQUEST, "해당 결제 정보가 이미 있습니다."),
+
+    PAYMENT_NOT_EXISTED(HttpStatus.NOT_FOUND, "해당 결제 정보가 존재하지 않습니다.");
 
 
 
