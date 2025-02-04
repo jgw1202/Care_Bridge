@@ -45,6 +45,7 @@ public class PaymentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // 결제 준비 (카카오페이)
     @PostMapping("/kakaopay")
     public KakaoPayReadyResponseDto KakaoPayReady(@RequestBody KakaoPayReadyRequestDto dto) { // UserDetails 추후에 추가, 유저 정보를 UserDetails에서 가져오기
 
@@ -56,6 +57,7 @@ public class PaymentController {
         return responseDto;
     }
 
+    // 결제 승인 (카카오페이)
     @GetMapping("/kakaopay/success")
     public ResponseEntity<String> afterKakaoPayRequest(@RequestParam("pg_token") String pgToken, @RequestParam("order_id") String orderId) { // UserDetails 추후에 추가
 
@@ -73,6 +75,7 @@ public class PaymentController {
         return ResponseEntity.ok().body(closePopupScript);
     }
 
+    // 결제 환불 (카카오페이)
     @PostMapping("/kakaopay/refund/{clinicId}")
     public KakaoPayRefundResponseDto kakaoPayRefund(@PathVariable Long clinicId) {
 

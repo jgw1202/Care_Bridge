@@ -3,6 +3,7 @@ package org.example.carebridge.domain.clinichistory.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.carebridge.domain.clinichistory.dto.ClinicListResponseDto;
+import org.example.carebridge.domain.clinichistory.dto.ClinicMessageResponseDto;
 import org.example.carebridge.domain.clinichistory.dto.ClinicResponseDto;
 import org.example.carebridge.domain.clinichistory.service.ClinicHistoryService;
 import org.example.carebridge.global.auth.UserDetailsImpl;
@@ -41,5 +42,10 @@ public class ClinicHistoryController {
 
     }
 
+    @GetMapping("/clinic-messages/{id}")
+    public ResponseEntity<List<ClinicMessageResponseDto>> getClinicMessage(@PathVariable("id") Long clinicId) {
+
+        return new ResponseEntity<>(clinicHistoriesService.getClinicMessage(clinicId), HttpStatus.OK);
+    }
 
 }
