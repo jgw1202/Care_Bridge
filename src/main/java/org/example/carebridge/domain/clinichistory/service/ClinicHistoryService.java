@@ -2,6 +2,7 @@ package org.example.carebridge.domain.clinichistory.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.carebridge.domain.clinichistory.dto.ClinicListResponseDto;
+import org.example.carebridge.domain.clinichistory.dto.ClinicResponseDto;
 import org.example.carebridge.domain.clinichistory.dto.DoctorClinicListResponseDto;
 import org.example.carebridge.domain.clinichistory.dto.PatientClinicListResponseDto;
 import org.example.carebridge.domain.clinichistory.entity.ClinicHistory;
@@ -27,20 +28,55 @@ public class ClinicHistoryService {
 
 
         //권한에 따른 Dto 분리
-        if(user.isDoctor()) {
+        if (user.isDoctor()) {
             List<ClinicHistory> clinicHistories = clinicHistoryRepository.findByDoctorUserId(userId);
-            for(ClinicHistory clinicHistory : clinicHistories) {
+            for (ClinicHistory clinicHistory : clinicHistories) {
                 clinicListResponseDtos.add(new DoctorClinicListResponseDto(clinicHistory));
             }
             return clinicListResponseDtos;
-        }
-
-        else {
+        } else {
             List<ClinicHistory> clinicHistories = clinicHistoryRepository.findByPatientUserId(userId);
-            for(ClinicHistory clinicHistory : clinicHistories) {
+            for (ClinicHistory clinicHistory : clinicHistories) {
                 clinicListResponseDtos.add(new PatientClinicListResponseDto(clinicHistory));
             }
             return clinicListResponseDtos;
         }
     }
+
+    @Transactional
+    public ClinicResponseDto getHistory(User user, Long clinicId) {
+
+        Long userId = user.getId();
+
+        if(user.isDoctor()) {
+            ClinicHistory clinicHistory = clinicHistoryRepository.findByDoctorUserIdAndClinicId(userId, clinicId);
+
+            ClinicResponseDto clinicResponseDto = new ClinicResponseDto(
+                    clinicHistory.getId(),
+                    clinicHistory.getPaymentStatus(),
+                    clinicHistory.getPrescription(),
+                    clinicHistory.getModifiedAt(),
+                    clinicHistory.getClinic().getId()
+            );
+
+            return clinicResponseDto;
+        }
+
+        else {
+            ClinicHistory clinicHistory = clinicHistoryRepository.findByPatientUserIdAndClinicId(userId, clinicId);
+
+            ClinicResponseDto clinicResponseDto = new ClinicResponseDto(
+                    clinicHistory.getId(),
+                    clinicHistory.getPaymentStatus(),
+                    clinicHistory.getPrescription(),
+                    clinicHistory.getModifiedAt(),
+                    clinicHistory.getClinic().getId()
+            );
+            return clinicResponseDto;
+        }
+
+
+    }
+
+
 }
