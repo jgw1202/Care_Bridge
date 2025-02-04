@@ -4,9 +4,14 @@ package org.example.carebridge.domain.board.entity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import org.example.carebridge.domain.comment.entity.Comment;
+import org.example.carebridge.domain.like.entity.Like;
 import org.example.carebridge.domain.user.entity.User;
 import org.example.carebridge.global.entity.BaseEntity;
 import org.hibernate.annotations.DynamicInsert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -31,6 +36,14 @@ public class Board extends BaseEntity {
     private User user;
 
     private String fileUrl;
+
+    // 댓글 연관관계 추가 (보드 삭제 시, 연관 댓글도 삭제됨)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    // 좋아요 연관관계 추가 (보드 삭제 시, 연관 좋아요도 삭제됨)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
 
     public Board() {}
 
