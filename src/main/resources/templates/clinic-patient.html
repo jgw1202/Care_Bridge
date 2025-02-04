@@ -249,13 +249,16 @@
       return;
     }
 
+    const currentOrigin = window.location.origin;
+
     fetch('/api/payments/kakaopay', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        clinicId: clinicId
+        clinicId: clinicId,
+        url: currentOrigin
       })
     })
       .then(response => response.json())

@@ -6,4 +6,5 @@ import lombok.Getter;
 public class KakaoPayReadyRequestDto {
 
     private Long clinicId;
+    private String url;
 }
