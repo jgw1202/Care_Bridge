@@ -72,6 +72,11 @@
                 // 로그인 성공 후 서버에서 쿠키를 받아옴
                 const result = await response.json();
                 const { accessToken, refreshToken } = result;
+
+                // ✅ localStorage에 저장 (페이지 새로고침해도 유지됨)
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+
                 console.log(accessToken);
                 alert('로그인 성공!#');
                 console.log(accessToken);
