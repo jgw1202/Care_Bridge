@@ -42,7 +42,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select new org.example.carebridge.domain.user.dto.patient.PatientResponseDto(u.id, u.userName, u.address, u.phoneNum) " +
             "from User u " +
-            "join Participation p on u = p.user " +
-            "where p.clinic = (select p2.clinic from Participation p2 where p2.user = :user) and u.userRole = :userRole")
+            "join Participation p on u.id = p.user.id " +
+            "where p.clinic in (select p2.clinic from Participation p2 where p2.user = :user) and u.userRole = :userRole")
     List<PatientResponseDto> findAllByParticipation(User user, UserRole userRole);
 }

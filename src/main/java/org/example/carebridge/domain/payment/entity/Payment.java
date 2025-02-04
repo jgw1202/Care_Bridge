@@ -51,7 +51,13 @@ public class Payment extends BaseEntity {
         this.clinic = clinic;
     }
 
-    public void updatePaymentStatus(PaymentStatus paymentStatus) {
+    public void updatePayment(String orderId, String tid) {
+        this.orderId = orderId;
+        this.tid = tid;
+    }
+
+    public void updatePaymentStatus(PaymentMethod paymentMethod, PaymentStatus paymentStatus) {
+        this.paymentMethod = paymentMethod;
         this.paymentStatus = paymentStatus;
     }
 }

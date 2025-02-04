@@ -112,7 +112,7 @@
                 <div class="card-body">
                     <button onclick="openPopup()">환자 목록</button>
                     <button onclick="startChat()">상담 시작</button>
-                    <button onclick="requestPayment()">결제 요청</button>
+                    <button id="paymentButton" onclick="requestPayment()">결제 요청</button>
                 </div>
             </div>
 
@@ -135,7 +135,7 @@
     let clinicId = null; // 상담 아이디
 
     function connect() {
-        const socket = new SockJS('http://localhost:8080/chat');
+        const socket = new SockJS('/chat');
         stompClient = Stomp.over(socket);
 
         const accessToken = localStorage.getItem('accessToken');
@@ -215,6 +215,7 @@
             document.querySelector('#chatTitle').innerText = `${data.clinicName}`
             clinicId = `${data.clinicId}`;
             console.log('상담 아이디 : ',clinicId);
+            updatePaymentButton();
             // WebSocket 연결
             connect();
         }).catch(error => {
@@ -256,12 +257,6 @@
                 'Content-Type': 'application/json'
             },
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("결제 취소 실패");
-            }
-            return response.json();
-        })
         .then(() => {
             alert("결제 요청이 취소되었습니다.");
             updatePaymentButton();
@@ -271,9 +266,30 @@
         });
     }
 
+    function refundPayment() {
+        if (!confirm("해당 결제를 환불하시겠습니까?")) {
+            return;
+        }
+
+        fetch(`/api/payments/kakaopay/refund/${clinicId}`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(() => {
+                alert("결제 요청이 환불되었습니다.");
+                updatePaymentButton();
+            })
+            .catch(error => {
+                console.error("결제 취소 오류:", error);
+            });
+    }
+
     function updatePaymentButton() {
         console.log("버튼 업데이트 작동 중")
-        fetch(`/api/payments/${clinicId}`, {
+        fetch(`/api/payments/`+clinicId, {
             method: 'GET',
             credentials: 'include'
         })
@@ -285,7 +301,7 @@
             return response.json();
         })
         .then(data => {
-            const paymentButton = document.querySelector("button[onclick='requestPayment()']");
+            const paymentButton = document.querySelector("button[id=\"paymentButton\"]");
             console.log("버튼 정보 확인")
             if (data.paymentStatus === "NOT_EXIST") {
                 paymentButton.textContent = "결제 요청";
@@ -297,6 +313,8 @@
                 paymentButton.textContent = "결제 환불";
                 paymentButton.setAttribute("onclick", "refundPayment()")
             } else {
+                paymentButton.textContent = "결제 요청";
+                paymentButton.setAttribute("onclick", "requestPayment()");
                 console.log("정보 확인 :", data.paymentStatus)
             }
             console.log("버튼 정보 변경 :", paymentButton.textContent)

@@ -79,6 +79,7 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 </head>
 <body>
 <!-- 세로 네비게이션 바 -->
@@ -102,7 +103,7 @@
     <div class="d-flex justify-content-between align-items-center">
       <div class="card" style="width: 30rem;">
         <div class="card-body" style="height: 30rem;">
-          <img src="..." class="card-img-top" alt="...">
+          <!--<img src="..." class="card-img-top" alt="...">-->
         </div>
         <ul class="list-group list-group-flush">
           <p class="list-group-item"><span>의사 : </span><span id="selectedDoctorName"></span></p>
@@ -112,7 +113,7 @@
         <div class="card-body">
           <button onclick="openPopup()">의사 변경</button>
           <button onclick="startChat()">상담 요청</button>
-          <button onclick="">결제하기</button>
+          <button onclick="requestKakaoPay()">결제하기</button>
         </div>
       </div>
 
@@ -135,7 +136,7 @@
   let clinicId = null; // 상담 아이디
 
   function connect() {
-    const socket = new SockJS('http://localhost:8080/chat');
+    const socket = new SockJS('/chat');
     stompClient = Stomp.over(socket);
 
     const accessToken = localStorage.getItem('accessToken');
@@ -231,6 +232,53 @@
     document.querySelector('#selectedDoctorCategory').innerText = doctor.category;
     document.querySelector('#selectedDoctorHospital').innerText = doctor.hospital;
     selectedDoctorId = doctor.id;
+  }
+
+
+  function requestKakaoPay() {
+    console.log("아이디 : ", clinicId)
+
+    const kakaoPayPopup = window.open(
+            "",
+            "kakaoPayPopup",
+            "width=500, height=700, left=100, top=100"
+    );
+
+    if(!kakaoPayPopup) {
+      alert("팝업창이 차단되었습니다.")
+      return;
+    }
+
+    const currentOrigin = window.location.origin;
+
+    fetch('/api/payments/kakaopay', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        clinicId: clinicId,
+        url: currentOrigin
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.next_redirect_pc_url) {
+          kakaoPayPopup.location.href = data.next_redirect_pc_url; // 카카오페이 결제 페이지로 리다이렉트
+
+          window.addEventListener("message", function(event) {
+            if (event.data === "paymentSuccess") {
+              alert("결제가 완료되었습니다.");
+            }
+          });
+        } else {
+          alert('결제 요청 실패');
+        }
+      })
+      .catch(error => {
+        console.error('결제 요청 오류:', error);
+        alert('결제 요청 중 오류가 발생했습니다.');
+      });
   }
 
   function logout() {

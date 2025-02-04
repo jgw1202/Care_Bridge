@@ -48,9 +48,8 @@ public class PaymentController {
     @PostMapping("/kakaopay")
     public KakaoPayReadyResponseDto KakaoPayReady(@RequestBody KakaoPayReadyRequestDto dto) { // UserDetails 추후에 추가, 유저 정보를 UserDetails에서 가져오기
 
+        log.info("결제 준비 시작 : 상담 아이디 : {}", dto.getClinicId());
         KakaoPayReadyResponseDto responseDto = kakaoPayService.payReady(dto);
-        log.info("주문 상품 이름: {}", dto.getName());
-        log.info("주문 금액: {}", dto.getTotalAmount().toString());
         log.info("결제 고유번호: {}", responseDto.getTid());
         log.info("결제 주문번호: {}", responseDto.getOrderId());
 
@@ -58,11 +57,20 @@ public class PaymentController {
     }
 
     @GetMapping("/kakaopay/success")
-    public KakaoPayApproveResponseDto afterKakaoPayRequest(@RequestParam("pg_token") String pgToken, @RequestParam("order_id") String orderId) { // UserDetails 추후에 추가
+    public ResponseEntity<String> afterKakaoPayRequest(@RequestParam("pg_token") String pgToken, @RequestParam("order_id") String orderId) { // UserDetails 추후에 추가
 
         log.info("결제 승인 토큰 : {}", pgToken);
+        kakaoPayService.payApprove(pgToken, orderId);
 
-        return kakaoPayService.payApprove(pgToken, orderId);
+        String closePopupScript = "<script>" +
+                "window.onload = function() {" +
+                "    window.opener.postMessage('paymentSuccess', '*');" +  // 부모 창에 결제 완료 메시지 전송
+                "    window.close();" +  // 팝업 닫기
+                "}" +
+                "</script>" +
+                "<h1>결제가 완료되었습니다.</h1>";
+
+        return ResponseEntity.ok().body(closePopupScript);
     }
 
     @PostMapping("/kakaopay/refund/{clinicId}")
