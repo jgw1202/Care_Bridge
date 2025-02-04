@@ -50,9 +50,9 @@ public class KakaoPayService {
         parameters.put("quantity", "1");                                                                                // 상품 수량
         parameters.put("total_amount", checkedPayment.get().getPrice().toString());                                     // 상품 총액
         parameters.put("tax_free_amount", "0");                                                                         // 상품 비과세 금액
-        parameters.put("approval_url", dto.getUrl()+"/api/payments/kakaopay/success?order_id="+orderId);        // 결제 성공 시 URL
-        parameters.put("cancel_url", dto.getUrl()+"/api/chatrooms/payments/kakaopay/cancel");                   // 결제 취소 시 URL
-        parameters.put("fail_url", dto.getUrl()+"/api/chatrooms/payments/kakaopay/failed");                     // 결제 실패 시 URL
+        parameters.put("approval_url", dto.getUrl()+"/api/payments/kakaopay/success?order_id="+orderId);                // 결제 성공 시 URL
+        parameters.put("cancel_url", dto.getUrl()+"/api/chatrooms/payments/kakaopay/cancel");                           // 결제 취소 시 URL
+        parameters.put("fail_url", dto.getUrl()+"/api/chatrooms/payments/kakaopay/failed");                             // 결제 실패 시 URL
 
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(parameters, this.getHeaders());
 
