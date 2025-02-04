@@ -5,6 +5,5 @@ import lombok.Getter;
 @Getter
 public class KakaoPayReadyRequestDto {
 
-    private String name;
-    private Integer totalAmount;
+    private Long clinicId;
 }

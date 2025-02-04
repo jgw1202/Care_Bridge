@@ -26,6 +26,12 @@ public class PaymentService {
 
     public PaymentCreateResponseDto createPayment(PaymentCreateRequestDto dto, Long clinicId) {
 
+        Optional<Payment> checkedPayment = Optional.ofNullable(paymentRepository.findByClinicId(clinicId, PaymentStatus.CANCEL));
+
+        if (checkedPayment.isPresent()) {
+            throw new PaymentException(ExceptionType.PAYMENT_EXISTED); // 임시 예외처리
+        }
+
         Payment payment = Payment.builder()
                 .price(dto.getPrice())
                 .paymentMethod(PaymentMethod.NOTPAY)
@@ -40,9 +46,11 @@ public class PaymentService {
     }
 
     public PaymentGetResponseDto findPaymentStatus(Long clinicId) {
+
         log.info("서비스 작동 시작");
-        Optional<Payment> payment = Optional.ofNullable(paymentRepository.findByClinicId(clinicId));
+        Optional<Payment> payment = Optional.ofNullable(paymentRepository.findByClinicId(clinicId, PaymentStatus.CANCEL));
         log.info("결제 정보 확인");
+
         if (payment.isPresent()) {
             log.info("상태 전송");
             return new PaymentGetResponseDto(payment.get().getPaymentStatus());
@@ -53,11 +61,11 @@ public class PaymentService {
     }
 
     public void deletePayment(Long clinicId) {
-        Payment payment = paymentRepository.findByClinicId(clinicId);
+        Payment payment = paymentRepository.findByClinicId(clinicId, PaymentStatus.CANCEL);
         if (payment.getPaymentStatus().equals(PaymentStatus.PENDING)) {
             paymentRepository.delete(payment);
         } else {
-            throw new PaymentException(ExceptionType.PAY_CANCEL); // 임시 예외처리
+            throw new PaymentException(ExceptionType.PAYMENT_NOT_EXISTED);
         }
     }
 }
