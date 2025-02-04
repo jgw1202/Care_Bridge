@@ -10,10 +10,9 @@ import org.example.carebridge.domain.comment.dto.CommentUpdateRequestDto;
 import org.example.carebridge.domain.comment.entity.Comment;
 import org.example.carebridge.domain.comment.repository.CommentRepository;
 import org.example.carebridge.domain.user.entity.User;
+import org.example.carebridge.domain.user.enums.UserRole;
 import org.example.carebridge.domain.user.repository.UserRepository;
-import org.example.carebridge.global.exception.BoardNotFoundException;
-import org.example.carebridge.global.exception.UserNotFoundException;
-import org.example.carebridge.global.exception.ForbiddenActionException;
+import org.example.carebridge.global.exception.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,8 +56,11 @@ public class CommentServiceImpl implements CommentService {
         // 댓글 엔티티 조회, 없을 경우 예외 발생
         Comment comment = commentRepository.findByIdOrElseThrow(id);
 
-        // 댓글 작성자와 현재 사용자가 일치하는지 확인
-        if (!comment.getUser().getId().equals(userId)) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(ExceptionType.USER_NOT_FOUND));
+
+        // 관리자는 다른 사람의 댓글도 수정할 수 있음
+        // 일반 사용자는 본인 댓글만 수정할 수 있음
+        if (!user.getUserRole().equals(UserRole.ADMIN) && !comment.getUser().getId().equals(userId)) {
             throw new ForbiddenActionException(); // 권한 없음 예외 발생
         }
 
@@ -83,8 +85,11 @@ public class CommentServiceImpl implements CommentService {
         // 댓글 엔티티 조회, 없을 경우 예외 발생
         Comment comment = commentRepository.findByIdOrElseThrow(id);
 
-        // 댓글 작성자와 현재 사용자가 일치하는지 확인
-        if (!comment.getUser().getId().equals(userId)) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ExceptionType.USER_NOT_FOUND));
+
+        // 관리자는 모든 댓글 삭제 가능, 일반 사용자는 본인 댓글만 삭제 가능
+        if (!user.getUserRole().equals(UserRole.ADMIN) && !comment.getUser().getId().equals(userId)) {
             throw new ForbiddenActionException(); // 권한 없음 예외 발생
         }
 
@@ -92,4 +97,5 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(comment);
         return new CommentDeleteResponseDto("댓글이 삭제되었습니다."); // 삭제 완료 메시지 반환
     }
+
 }

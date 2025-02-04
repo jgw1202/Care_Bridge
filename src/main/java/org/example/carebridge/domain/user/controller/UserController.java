@@ -129,6 +129,7 @@ public class UserController {
         return new ResponseEntity<>(userUpdateResponseDto, HttpStatus.OK);
     }
 
+    //의사 전체 조회
     @GetMapping("/doctors")
     public ResponseEntity<List<DoctorListResponseDto>> getAllDoctor(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -143,6 +144,7 @@ public class UserController {
         }
     }
 
+    //의사 단건 조회
     @GetMapping("/doctor")
     public ResponseEntity<DoctorResponseDto> getDoctor(
             @RequestParam Long id,
@@ -152,4 +154,5 @@ public class UserController {
 
         return new ResponseEntity<>(doctorResponseDto, HttpStatus.OK);
     }
+
 }
