@@ -38,7 +38,7 @@ public class WebConfig {
             "/signup", "/signup-patient", "/signup-doctor", "/signup-social",
             "/chat/**", "/pub/**", "/sub/**",
             "/login", "/login-social",
-            "/api/payments/kakaopay", "/api/payments/kakaopay/success"};
+            "/api/payments/kakaopay", "/api/payments/kakaopay/success", "/actuator/**"};
 
     private final JwtAuthFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
