@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 1s  # 매 5초마다 데이터 수집
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["host.docker.internal:9090"]
+
+  - job_name: "springboot"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["host.docker.internal:8080"]
+
+  - job_name: "node_exporter"
+    static_configs:
+      - targets: ["host.docker.internal:9100"]
