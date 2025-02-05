@@ -36,10 +36,10 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
     restart: always
     command:
-      - "--config.file=/etc/prometheus/prometheus.yaml"
+      - "--config.file=/etc/prometheus/prometheus.yml"
 
   grafana:
     image: grafana/grafana
