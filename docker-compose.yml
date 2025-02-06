@@ -6,7 +6,7 @@ services:
     image: herokim97/care-bridge:latest  # Docker Hub에서 herokim97/codesix 이미지를 사용
     ports:
      - "8080:8080"
-
+    container_name: app
     depends_on:
       - mysql
       - redis
