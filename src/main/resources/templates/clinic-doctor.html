@@ -218,10 +218,45 @@
             updatePaymentButton();
             // WebSocket 연결
             connect();
+
+            fetchChatHistory(clinicId);
         }).catch(error => {
             console.error('Fetch 에러:', error);
             alert(`오류 발생: ${error.message}`);
         });
+    }
+
+    function fetchChatHistory(clinicId) {
+        fetch(`/api/clinic/`+clinicId, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("채팅 기록 불러오기 실패");
+                }
+                return response.json();
+            })
+            .then(messages => {
+                const messagesContainer = document.getElementById('messages');
+                messagesContainer.innerHTML = ''; // 기존 메시지 초기화
+
+                messages.forEach(chat => {
+                    const messageElement = document.createElement('li');
+                    console.log("채팅 내역",`${chat.name}: ${chat.message}`);
+                    messageElement.textContent = `${chat.name}: ${chat.message}`;
+                    messagesContainer.appendChild(messageElement);
+                });
+
+                // 최신 메시지로 스크롤 이동
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            })
+            .catch(error => {
+                console.error("채팅 기록 로드 중 오류:", error);
+            });
     }
 
     function setSelectedPatient(patient) {
