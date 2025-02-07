@@ -7,8 +7,9 @@ import org.example.carebridge.global.entity.BaseEntity;
 
 @Getter
 @Entity
-@Table(name = "message")
-public class Message extends BaseEntity {
+@Table(name = "clinic_message")
+public class ClinicMessage extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,10 +24,10 @@ public class Message extends BaseEntity {
     @JoinColumn(name = "clinic_id")
     private Clinic clinic;
 
-    public Message() {}
+    public ClinicMessage() {}
 
     @Builder
-    public Message(String messageContent, String sender, Clinic clinic) {
+    public ClinicMessage(String messageContent, String sender, Clinic clinic) {
         this.messageContent = messageContent;
         this.sender = sender;
         this.clinic = clinic;

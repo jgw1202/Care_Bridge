@@ -110,7 +110,8 @@
   function connect() {
     var socket = new SockJS('/chat');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function(frame) {
+    const accessToken = localStorage.getItem('accessToken');
+    stompClient.connect({Authorization: `Bearer ${accessToken}`}, function(frame) {
       console.log('Connected: ' + frame);
       $('#sendBtn').prop('disabled', false);
       stompClient.subscribe('/sub/messages', function(response) {

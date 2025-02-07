@@ -9,6 +9,7 @@ import org.example.carebridge.domain.clinic.dto.MessageGetResponseDto;
 import org.example.carebridge.domain.clinic.dto.sendmessage.MessageSendRequestDto;
 import org.example.carebridge.domain.clinic.service.ClinicService;
 import org.example.carebridge.domain.clinic.service.message.MessageService;
+import org.example.carebridge.domain.clinic.service.message.MessageService2;
 import org.example.carebridge.global.auth.UserDetailsImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,7 +58,6 @@ public class ClinicController {
         }
         log.info("사용자 {}가 메시지를 보냄: {}", userDetails, dto.getMessage());
         log.info("clinicId: {}, message: {}, 유저 : {}", clinicId, dto.getMessage(), Objects.requireNonNull(userDetails).getUser());
-        log.info("인증 정보 : {}", SecurityContextHolder.getContext().getAuthentication());
         return messageService.saveMessage(clinicId, dto, userDetails);
     }
 
