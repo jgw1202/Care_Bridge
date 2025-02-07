@@ -104,15 +104,17 @@
     아래의 설정 중, secure(true), sameSite(None) 설정은 Https 연결 시, 사용된다.
     2개의 값을 변경 해주면 해결되는 이슈였다.
     
-    ![image.png](attachment:59651d19-f4a9-4dc9-b55e-6c42f8fc0a19:image.png)
+    ![image](https://github.com/user-attachments/assets/e3818b3b-16a6-4ba2-8154-37bdaa1ff3c9)
+
+    ![image](https://github.com/user-attachments/assets/d5920b7f-ea39-467d-83d3-944d8f2b99d6)
     
-    ![image.png](attachment:be39e4ea-af6e-4a6e-af06-16d5af898e28:image.png)
     
     AccessToken은 모든 서비스의 기본이기 때문에, 연결 프로토콜을 잘 확인해야 한다.
     
 - docker-compose 사용하기
     
-    ![deploy.yml 중 일부](attachment:ad73ad81-bc3c-45fa-8aaa-1e240cb81bad:image.png)
+    ![deploy.yml 중 일부](![image](https://github.com/user-attachments/assets/43da6b3a-bb39-4e81-ba69-7125138e57a7)
+)
     
     deploy.yml 중 일부
     
@@ -128,7 +130,8 @@
     
     위와 같은 특징으로 인해 아래와 같은 코드로 변하게 되었다.
     
-    ![image.png](attachment:1b566788-e28e-4192-888e-b3706b7b6a25:스크린샷_2025-02-06_오후_5.16.07.png)
+    ![image](https://github.com/user-attachments/assets/47305827-2769-423b-8773-6ac0a82f1586)
+
     
     docker-compose 를 사용하기 위해선, docker-compose.yml 파일과
     환경 변수를 설정해 줄, .env 파일이 필요하다.
