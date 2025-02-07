@@ -51,11 +51,12 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<MessageGetResponseDto> findMessage(Long clinicId, UserDetailsImpl userDetails) {
 
-        if (!participationRepository.findByUserIdAndClinicId(userDetails.getUser().getId(), clinicId).isEmpty()) {
+        if (participationRepository.findByUserIdAndClinicId(userDetails.getUser().getId(), clinicId).isEmpty()) {
             throw new IllegalArgumentException("임시 예외 처리");
         }
 
         List<Message> messages = messageRepository.findAllByClinicId(clinicId);
+        log.info("메세지 출력 중");
 
         return messages.stream().map(MessageGetResponseDto::toDto).collect(Collectors.toList());
     }

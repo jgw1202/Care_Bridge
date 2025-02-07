@@ -13,7 +13,7 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
                 .nullDestMatcher().permitAll()
                 .simpDestMatchers("/pub/**").authenticated() // 메시지 전송 경로는 인증 필요
                 .simpSubscribeDestMatchers("/sub/**").authenticated() // 퍼블릭 구독은 허용
-                .anyMessage().denyAll(); // 나머지 차단
+                .anyMessage().permitAll(); // 나머지 차단
     }
 
     @Override
