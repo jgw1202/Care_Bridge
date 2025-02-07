@@ -113,8 +113,8 @@
     
 - docker-compose 사용하기
     
-    ![deploy.yml 중 일부](![image](https://github.com/user-attachments/assets/43da6b3a-bb39-4e81-ba69-7125138e57a7)
-)
+    ![image](https://github.com/user-attachments/assets/d41746d4-0860-4fca-bdad-3e1c0a846313)
+
     
     deploy.yml 중 일부
     
