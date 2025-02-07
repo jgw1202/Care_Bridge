@@ -113,6 +113,7 @@
                     <button onclick="openPopup()">환자 목록</button>
                     <button onclick="startChat()">상담 시작</button>
                     <button id="paymentButton" onclick="requestPayment()">결제 요청</button>
+                    <button onclick="removeChat()">상담방 삭제</button>
                 </div>
             </div>
 
@@ -253,6 +254,28 @@
 
                 // 최신 메시지로 스크롤 이동
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            })
+            .catch(error => {
+                console.error("채팅 기록 로드 중 오류:", error);
+            });
+    }
+
+    function removeChat() {
+        fetch(`/api/clinic/`+clinicId, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("상담방 삭제 실패");
+                }
+                // 채팅방 비활성화
+                const chat = document.getElementById('chat');
+                chat.style.display = 'none';
+                return response.json();
             })
             .catch(error => {
                 console.error("채팅 기록 로드 중 오류:", error);

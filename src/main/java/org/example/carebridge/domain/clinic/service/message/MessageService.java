@@ -28,7 +28,7 @@ public class MessageService {
     private final ClinicMessageRepository clinicMessageRepository;
     private final TestmRepository testmRepository;
 
-    @Transactional
+    @Transactional(transactionManager = "webSocketTransactionManager")
     public String saveMessage(Long clinicId, MessageSendRequestDto dto, UserDetailsImpl userDetails) {
         Clinic clinic = clinicRepository.findByIdOrElseThrow(clinicId);
 
@@ -37,14 +37,9 @@ public class MessageService {
         }
 
         ClinicMessage message = new ClinicMessage(dto.getMessage(), userDetails.getUser().getUserName(), clinic);
-        Testm testm = new Testm("테스트");
-
-        log.info("메세지 : {}, {}", message.getId(), message.getClinic().getId());
 
         ClinicMessage result = clinicMessageRepository.save(message);
-        Testm t = testmRepository.save(testm);
 
-        log.info("테스트 : {}, {}", t.getId(), t.getContent());
         log.info("메세지 : {}", result.getId());
         log.info("메세지 저장 완료 : {}", result.getMessageContent());
 
