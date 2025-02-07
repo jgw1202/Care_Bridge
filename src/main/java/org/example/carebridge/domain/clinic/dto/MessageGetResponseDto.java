@@ -2,7 +2,7 @@ package org.example.carebridge.domain.clinic.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.example.carebridge.domain.clinic.entity.Message;
+import org.example.carebridge.domain.clinic.entity.ClinicMessage;
 
 @Getter
 public class MessageGetResponseDto {
@@ -15,7 +15,7 @@ public class MessageGetResponseDto {
         this.message = message;
     }
 
-    public static MessageGetResponseDto toDto(Message message) {
+    public static MessageGetResponseDto toDto(ClinicMessage message) {
         return MessageGetResponseDto.builder()
                 .name(message.getSender())
                 .message(message.getMessageContent())

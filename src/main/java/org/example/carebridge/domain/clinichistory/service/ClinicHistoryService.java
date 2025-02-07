@@ -1,8 +1,8 @@
 package org.example.carebridge.domain.clinichistory.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.carebridge.domain.clinic.entity.Message;
-import org.example.carebridge.domain.clinic.repository.MessageRepository;
+import org.example.carebridge.domain.clinic.entity.ClinicMessage;
+import org.example.carebridge.domain.clinic.repository.ClinicMessageRepository;
 import org.example.carebridge.domain.clinic.repository.ParticipationRepository;
 import org.example.carebridge.domain.clinichistory.dto.*;
 import org.example.carebridge.domain.clinichistory.entity.ClinicHistory;
@@ -20,7 +20,7 @@ public class ClinicHistoryService {
 
     private final ClinicHistoryRepository clinicHistoryRepository;
     private final ParticipationRepository participationRepository;
-    private final MessageRepository messageRepository;
+    private final ClinicMessageRepository clinicMessageRepository;
 
     @Transactional
     public List<ClinicListResponseDto> getHistoryList(User user) {
@@ -82,9 +82,9 @@ public class ClinicHistoryService {
     public List<ClinicMessageResponseDto> getClinicMessage(Long clinicId) {
 
         List<ClinicMessageResponseDto> messageResponseDtos = new ArrayList<>();
-        List<Message> messages = messageRepository.findAllByClinicId(clinicId);
+        List<ClinicMessage> messages = clinicMessageRepository.findAllByClinicId(clinicId);
 
-        for (Message message : messages) {
+        for (ClinicMessage message : messages) {
             messageResponseDtos.add(new ClinicMessageResponseDto(message.getSender(), message.getMessageContent()));
         }
 

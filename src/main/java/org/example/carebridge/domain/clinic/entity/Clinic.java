@@ -24,7 +24,7 @@ public class Clinic {
     private ClinicStatus clinicStatus;
 
     @OneToMany(mappedBy = "clinic")
-    private final List<Message> messages = new ArrayList<>();
+    private final List<ClinicMessage> messages = new ArrayList<>();
 
     @OneToMany(mappedBy = "clinic")
     private final List<Participation> participations = new ArrayList<>();
@@ -38,7 +38,7 @@ public class Clinic {
         this.clinicStatus = clinicStatus;
     }
 
-    public void addMessage(Message message) {
+    public void addMessage(ClinicMessage message) {
         messages.add(message);
     }
 

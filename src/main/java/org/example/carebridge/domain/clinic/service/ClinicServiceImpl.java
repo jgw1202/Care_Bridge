@@ -39,18 +39,21 @@ public class ClinicServiceImpl implements ClinicService {
             throw new BadValueException(ExceptionType.USER_NOT_FOUND);
         }
 
-        Optional<Participation> existingParticipation = participationRepository.findByUserAndClinic(doctor, userDetails.getUser());
+        Optional<Participation> existingParticipation = participationRepository.findByUserAndClinic(doctor, userDetails.getUser(), ClinicStatus.NORMAL);
 
         if (existingParticipation.isPresent()) {
             // 기존 Clinic이 있을 경우 해당 Clinic 반환
             Clinic existingClinic = existingParticipation.get().getClinic();
-            log.info("유저 정보 : {}", userDetails.getUser());
-            return ClinicCreateResponseDto.builder()
-                    .clinicId(existingClinic.getId())
-                    .patientName(userDetails.getUser().getUserName())
-                    .doctorName(doctor.getUserName())
-                    .clinicName(existingClinic.getName())
-                    .build();
+            if (existingClinic.getClinicStatus().equals(ClinicStatus.NORMAL)) {
+                // 해당 클리닉이
+                log.info("유저 정보 : {}", userDetails.getUser());
+                return ClinicCreateResponseDto.builder()
+                        .clinicId(existingClinic.getId())
+                        .patientName(userDetails.getUser().getUserName())
+                        .doctorName(doctor.getUserName())
+                        .clinicName(existingClinic.getName())
+                        .build();
+            }
         }
 
         Clinic clinic = Clinic.builder()
@@ -78,7 +81,7 @@ public class ClinicServiceImpl implements ClinicService {
     public ClinicCreateResponseDto participateClinic(ClinicCreateRequestDto dto, UserDetailsImpl userDetails) {
         User patient = userRepository.findByIdOrElseThrow(dto.getId());
 
-        Optional<Participation> existingParticipation = participationRepository.findByUserAndClinic(userDetails.getUser(), patient);
+        Optional<Participation> existingParticipation = participationRepository.findByUserAndClinic(userDetails.getUser(), patient, ClinicStatus.NORMAL);
 
         if (existingParticipation.isPresent()) {
             // 기존 Clinic이 있을 경우 해당 Clinic 반환
@@ -99,7 +102,11 @@ public class ClinicServiceImpl implements ClinicService {
     @Override
     public ClinicDeleteResponseDto deleteClinic(Long clinicId, UserDetailsImpl userDetails) {
         Clinic clinic = clinicRepository.findByIdOrElseThrow(clinicId);
+        log.info("삭제 시작 : {}", clinic.getClinicStatus());
         clinic.deleteClinic();
+        log.info("삭제 완료 : {}", clinic.getClinicStatus());
+
+        log.info("삭제 확인 : {}", clinicRepository.save(clinic).getClinicStatus());
         return null;
     }
 }
