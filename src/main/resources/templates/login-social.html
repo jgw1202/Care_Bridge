@@ -7,14 +7,14 @@
     document.addEventListener("DOMContentLoaded", () => {
         // try {
         //     // Thymeleaf에서 서버로부터 전달된 accessToken과 refreshToken을 변수에 할당
-        //     const accessToken = document.getElementById('accessToken').value;
-        //     const refreshToken = document.getElementById('refreshToken').value;
+            const accessToken = document.getElementById('accessToken').value;
+            const refreshToken = document.getElementById('refreshToken').value;
         //
         //     // accessToken과 refreshToken이 존재하는지 확인
         //     if (accessToken && refreshToken) {
         //         // 로컬 스토리지에 저장
-        //         localStorage.setItem('accessToken', accessToken);
-        //         localStorage.setItem('refreshToken', refreshToken);
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
 
                 alert('Login success!!');
                 // 대시보드로 리다이렉트
