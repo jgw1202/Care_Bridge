@@ -9,7 +9,6 @@ import org.example.carebridge.domain.clinic.dto.MessageGetResponseDto;
 import org.example.carebridge.domain.clinic.dto.sendmessage.MessageSendRequestDto;
 import org.example.carebridge.domain.clinic.service.ClinicService;
 import org.example.carebridge.domain.clinic.service.message.MessageService;
-import org.example.carebridge.domain.clinic.service.message.MessageService2;
 import org.example.carebridge.global.auth.UserDetailsImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

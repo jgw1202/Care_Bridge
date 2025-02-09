@@ -6,11 +6,9 @@ import org.example.carebridge.domain.clinic.dto.sendmessage.MessageSendRequestDt
 import org.example.carebridge.domain.clinic.dto.MessageGetResponseDto;
 import org.example.carebridge.domain.clinic.entity.Clinic;
 import org.example.carebridge.domain.clinic.entity.ClinicMessage;
-import org.example.carebridge.domain.clinic.entity.Testm;
 import org.example.carebridge.domain.clinic.repository.ClinicMessageRepository;
 import org.example.carebridge.domain.clinic.repository.ClinicRepository;
 import org.example.carebridge.domain.clinic.repository.ParticipationRepository;
-import org.example.carebridge.domain.clinic.repository.TestmRepository;
 import org.example.carebridge.global.auth.UserDetailsImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +24,6 @@ public class MessageService {
     private final ClinicRepository clinicRepository;
     private final ParticipationRepository participationRepository;
     private final ClinicMessageRepository clinicMessageRepository;
-    private final TestmRepository testmRepository;
-
     @Transactional(transactionManager = "webSocketTransactionManager")
     public String saveMessage(Long clinicId, MessageSendRequestDto dto, UserDetailsImpl userDetails) {
         Clinic clinic = clinicRepository.findByIdOrElseThrow(clinicId);
@@ -45,6 +41,7 @@ public class MessageService {
 
         return userDetails.getUser().getUserName() + " : " + dto.getMessage();
     }
+
 
     public List<MessageGetResponseDto> findMessage(Long clinicId, UserDetailsImpl userDetails) {
 
