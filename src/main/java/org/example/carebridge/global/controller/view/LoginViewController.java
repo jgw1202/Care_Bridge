@@ -46,10 +46,11 @@ public class LoginViewController {
     }
 
     @GetMapping("/login-social")
-    public String afterGoogleLogin(@RequestParam String accessToken, @RequestParam String refreshToken, HttpServletResponse response) {
+    public String afterGoogleLogin(@RequestParam String accessToken, @RequestParam String refreshToken, HttpServletResponse response,
+                                   Model model) {
 
-//        model.addAttribute("accessToken", accessToken);
-//        model.addAttribute("refreshToken", refreshToken);
+        model.addAttribute("accessToken", accessToken);
+        model.addAttribute("refreshToken", refreshToken);
         ResponseCookie cookie = ResponseCookie.from("Authorization", accessToken)
                 .httpOnly(true)
                 .secure(false)
