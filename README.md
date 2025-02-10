@@ -1,4 +1,4 @@
-# Final Project : Care-Bridge
+# Care-Bridge
 
 ---
 
